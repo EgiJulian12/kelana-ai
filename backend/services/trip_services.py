@@ -17,6 +17,14 @@ def get_transportation_recomendation(category):
     else:
         return "Flight"
 
+def get_travel_season(month):
+    if month == "December":
+        return " Peak Season"
+    elif month == "June":
+        return "Holiday Season"
+    else:
+        return "Regular Season"
+
 def get_recomendation_places(destination):
     recomendations = {
         "Japan" : ["Tokyo Tower", "Shibuya", "Mount Fuji"],
