@@ -1,5 +1,5 @@
-#Now Use Them
 from services.trip_services import (calculate_daily_budget, get_trip_category, get_recomendation_places, get_transportation_recomendation, get_travel_season)
+
 
 def print_destinations(destinations):
     print("Your Destination")
@@ -21,20 +21,24 @@ def print_recomendation_places(destinations):
 
         print()
 
-def print_trip_summary(destination, days, budget, month):
-    daily_budget = calculate_daily_budget(budget, days)
-    category = get_trip_category(budget)
-    transportation = get_transportation_recomendation(category)
-    months = get_travel_season(month)
+def print_trip_summary():
+    
 
     print("========================")
     print("KelanaAI")
     print("========================")
     print()
-    print_destinations(destination)
-    print()
-    print(f"Days        : {days}")
-    print(f"Budget      : {budget} USD")
+
+    raw_destination = input("Destination : ")
+    destination = [d.strip() for d in raw_destination.split(",") if d.strip()]
+    days = int(input("Days        : "))
+    budget = float(input("Budget : "))
+    month = input("Travel Month: ")
+
+    daily_budget = calculate_daily_budget(budget, days)
+    category = get_trip_category(budget)
+    transportation = get_transportation_recomendation(category)
+    months = get_travel_season(month)
     print(f"Category    : {category}")
     print(f"Daily Budget: {daily_budget:.0f} USD/day")
     print(f"Travel Month: {month}")
@@ -44,4 +48,4 @@ def print_trip_summary(destination, days, budget, month):
     print_recomendation_places(destination)
 
 # Call it with any trip
-print_trip_summary(["Bali", "Singapore"], 5 , 1000, "June")
+print_trip_summary()
