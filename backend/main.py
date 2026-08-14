@@ -1,42 +1,44 @@
 #Now Use Them
-def print_trip_summary(destination, days, budget, travel_style, hotel_cost, food_cost, transportation_cost, miscellaneous_cost, country, currency, month_of_travel):
+from services.trip_services import (calculate_daily_budget, get_trip_category, get_recomendation_places, get_transportation_recomendation)
 
-    total_estimated_cost = (hotel_cost + food_cost + transportation_cost + miscellaneous_cost)
+def print_destinations(destinations):
+    print("Your Destination")
+
+    index = 0 
+    while index < len (destinations):
+        print(f"{index+1}. {destinations[index]}")
+        index += 1
+
+def print_recomendation_places(destinations):
+    print("Recommended Places")
+    print()
+
+    for destination in destinations:
+        print(destination)
+
+        for place in get_recomendation_places(destination):
+            print(f"- {place}")
+
+        print()
+
+def print_trip_summary(destination, days, budget):
+    daily_budget = calculate_daily_budget(budget, days)
+    category = get_trip_category(budget)
+    transportation = get_transportation_recomendation(category)
 
     print("========================")
     print("KelanaAI")
     print("========================")
-    print(f"Destination : {destination}")
-    print(f"Country     : {country}")
-    print(f"Days        : {days}")
-    print(f"Budget      : {budget} {currency}")
-    print(f"Currency    : {currency}")
-    print(f"Travel Month: {month_of_travel}")
-    print(f"Style       : {travel_style}")
-    print(f"Hotel Cost  : {hotel_cost} {currency}")
-    print(f"Food Cost   : {food_cost} {currency}")
-    print(f"Transport   : {transportation_cost} {currency}")
-    print(f"Misc Cost   : {miscellaneous_cost} {currency}")
-    print(f"Total Cost  : {total_estimated_cost} {currency}")
-
-    if total_estimated_cost > budget:
-        print("⚠ Budget Exceeded." )   
-
     print()
-
-
-destination = input("Destination : ")
-country = input("Country : ")
-days = int(input("Days : "))
-budget = float(input("Budget : "))
-travel_style = input("Style : ")
-hotel_cost = float(input("Hotel Cost : "))
-food_cost = float(input("Food Cost : "))
-transportation_cost = float(input("Transportation Cost : "))
-miscellaneous_cost = float(input("Miscellaneous Cost : "))
-currency = input("Currency : ")
-month_of_travel = input("Month of Travel : ")
+    print_destinations(destination)
+    print()
+    print(f"Days        : {days}")
+    print(f"Budget      : {budget} USD")
+    print(f"Category    : {category}")
+    print(f"Daily Budget: {daily_budget:.0f} USD/day")
+    print(f"Recommended Transportation : {transportation}")
+    print()
+    print_recomendation_places(destination)
 
 # Call it with any trip
-print_trip_summary(destination, days, budget, travel_style, hotel_cost, food_cost, transportation_cost, miscellaneous_cost, country, currency, month_of_travel)
-
+print_trip_summary(["Bali", "Singapore"], 5 , 1000)
