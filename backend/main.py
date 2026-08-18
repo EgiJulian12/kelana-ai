@@ -57,3 +57,12 @@ def create_trip(request: TripRequest):
         "recommended_transportation": transportation,
         "recommended_places": recommendations
     }
+
+# --- HOMEWORK / ENDPOINTS 
+@app.get("/api/v1/recommendations")
+def get_recommendations():
+    return ["Tokyo Tower", "Mount Fuji", "Shibuya"]
+
+@app.get("/api/v1/transportations")
+def get_transportations():
+    return ["Bus", "Train", "Flight"]
