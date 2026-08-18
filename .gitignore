@@ -1,3 +1,4 @@
-.gitignore
 .venv
-_pycache_
+backend/.venv
+_pychache_
+.gitignore
