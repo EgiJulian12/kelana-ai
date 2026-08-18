@@ -1,51 +1,59 @@
-from services.trip_services import (calculate_daily_budget, get_trip_category, get_recomendation_places, get_transportation_recomendation, get_travel_season)
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List
+from services.trip_services import (
+    calculate_daily_budget,
+    get_trip_category,
+    get_recomendation_places,
+    get_transportation_recomendation,
+    get_travel_season,
+)
+
+app = FastAPI(title="KelanaAI API")
 
 
-def print_destinations(destinations):
-    print("Your Destination")
+# Menggantikan fungsi input() dari console
+class TripRequest(BaseModel):
+    destinations: List[str]  # Menerima list destinasi
+    days: int
+    budget: float
+    month: str
 
-    index = 0 
-    while index < len (destinations):
-        print(f"{index+1}. {destinations[index]}")
-        index += 1
 
-def print_recomendation_places(destinations):
-    print("Recommended Places")
-    print()
 
-    for destination in destinations:
-        print(destination)
+# 1. Root / Welcome Endpoint
+@app.get("/")
+def home():
+    return {"message": "Welcome to KelanaAI"}
 
-        for place in get_recomendation_places(destination):
-            print(f"- {place}")
+# 2. Health Check Endpoint
+@app.get("/health")
+def health_check():
+    return {"status": "OK"}
 
-        print()
-
-def print_trip_summary():
-    
-
-    print("========================")
-    print("KelanaAI")
-    print("========================")
-    print()
-
-    raw_destination = input("Destination : ")
-    destination = [d.strip() for d in raw_destination.split(",") if d.strip()]
-    days = int(input("Days        : "))
-    budget = float(input("Budget : "))
-    month = input("Travel Month: ")
-
-    daily_budget = calculate_daily_budget(budget, days)
-    category = get_trip_category(budget)
+# 3. Main Endpoint
+@app.post("/api/v1/trips")
+def create_trip(request: TripRequest):
+    # Memanggil fungsi business logic yang sudah dibuat
+    daily_budget = calculate_daily_budget(request.budget, request.days)
+    category = get_trip_category(request.budget)
     transportation = get_transportation_recomendation(category)
-    months = get_travel_season(month)
-    print(f"Category    : {category}")
-    print(f"Daily Budget: {daily_budget:.0f} USD/day")
-    print(f"Travel Month: {month}")
-    print(f"Season      : {months}")
-    print(f"Recommended Transportation : {transportation}")
-    print()
-    print_recomendation_places(destination)
+    season = get_travel_season(request.month)
+    
+    # Mengumpulkan rekomendasi tempat untuk setiap destinasi
+    recommendations = {}
+    for dest in request.destinations:
+        recommendations[dest] = get_recomendation_places(dest)
 
-# Call it with any trip
-print_trip_summary()
+    # Mengembalikan JSON Response
+    return {
+        "destinations": request.destinations,
+        "days": request.days,
+        "budget": request.budget,
+        "category": category,
+        "daily_budget": round(daily_budget, 2),
+        "travel_month": request.month,
+        "season": season,
+        "recommended_transportation": transportation,
+        "recommended_places": recommendations
+    }
