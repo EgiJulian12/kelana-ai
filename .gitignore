@@ -2,3 +2,4 @@
 backend/.venv
 _pychache_
 .gitignore
+.env
