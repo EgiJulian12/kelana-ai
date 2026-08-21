@@ -76,6 +76,23 @@ def create_trip(request: TripRequest):
     daily_budget = calculate_daily_budget(request.budget, request.days)
     category     = get_trip_category(request.budget)
 
+    ai_recommendation = get_ai_recommendation(
+        destination=", ".join(request.destinations),
+        days=request.days,
+        budget=request.budget,
+        travel_style=request.travel_style,
+    )
+
+    # create a Trip ORM object
+    trip = Trip(
+        destination  = ", ".join(request.destinations),
+        days         = request.days,
+        budget       = request.budget,
+        category     = category,
+        daily_budget = daily_budget,
+        ai_recommendation = ai_recommendation,
+    )
+
     # save to PostgreSQL
     db = SessionLocal()
     db.add(trip)
@@ -98,6 +115,7 @@ def update_trip_budget(trip_id: int, request: TripUpdate):
     # Hitung ulang (recalculate) nilai category dan daily_budget
     new_daily_budget = calculate_daily_budget(request.budget, trip.days)
     new_category = get_trip_category(request.budget)
+
 
     # Update data pada object trip
     trip.budget = request.budget
