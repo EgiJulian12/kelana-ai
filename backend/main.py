@@ -10,6 +10,8 @@ from services.trip_services import (
 )
 from models.trip import Trip
 from database import SessionLocal, init_db
+from services.bedrock_service import get_ai_recommendation
+
 
 init_db()
 
@@ -22,6 +24,11 @@ class TripRequest(BaseModel):
     days: int
     budget: float
     month: str
+    travel_style: str = "cultural"  # default travel style
+
+# Schema untuk update budget pada endpoint PUT
+class TripUpdate(BaseModel):
+    budget: float
 
 # 1. Root / Welcome Endpoint
 @app.get("/")
@@ -69,15 +76,6 @@ def create_trip(request: TripRequest):
     daily_budget = calculate_daily_budget(request.budget, request.days)
     category     = get_trip_category(request.budget)
 
-    # create a Trip ORM object
-    trip = Trip(
-        destination  = ", ".join(request.destinations),
-        days         = request.days,
-        budget       = request.budget,
-        category     = category,
-        daily_budget = daily_budget,
-    )
-
     # save to PostgreSQL
     db = SessionLocal()
     db.add(trip)
@@ -85,6 +83,52 @@ def create_trip(request: TripRequest):
     db.refresh(trip)   # get the auto-generated id
     db.close()
     return trip
+
+# 7. Endpoint PUT /api/v1/trips/{trip_id} - Update Budget
+@app.put("/api/v1/trips/{trip_id}")
+def update_trip_budget(trip_id: int, request: TripUpdate):
+    db = SessionLocal()
+    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+
+    # Periksa apakah trip ditemukan
+    if trip is None:
+        db.close()
+        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+
+    # Hitung ulang (recalculate) nilai category dan daily_budget
+    new_daily_budget = calculate_daily_budget(request.budget, trip.days)
+    new_category = get_trip_category(request.budget)
+
+    # Update data pada object trip
+    trip.budget = request.budget
+    trip.daily_budget = new_daily_budget
+    trip.category = new_category
+
+    # Simpan perubahan ke database
+    db.commit()
+    db.refresh(trip)
+    db.close()
+
+    return trip
+
+
+# 8. Endpoint DELETE /api/v1/trips/{trip_id} - Delete Trip
+@app.delete("/api/v1/trips/{trip_id}")
+def delete_trip(trip_id: int):
+    db = SessionLocal()
+    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+
+    # Periksa apakah trip ditemukan
+    if trip is None:
+        db.close()
+        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+
+    # Hapus dari database
+    db.delete(trip)
+    db.commit()
+    db.close()
+
+    return {"message": f"Trip with id {trip_id} successfully deleted"}
 
 
 
