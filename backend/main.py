@@ -101,6 +101,38 @@ def create_trip(request: TripRequest):
     db.close()
     return trip
 
+
+# 7. Generate AI Recommendation for existing trip
+@app.post("/api/v1/trips/{trip_id}/generate")
+def generate_trip_recommendation(trip_id: int):
+    """
+    Generate improved AI recommendation for an existing trip.
+    This will fetch the trip from database, generate new AI recommendation,
+    and save it back to the ai_recommendation column.
+    """
+    db = SessionLocal()
+    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+    
+    if trip is None:
+        db.close()
+        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+    
+    # Generate new AI recommendation
+    ai_recommendation = get_ai_recommendation(
+        destination=trip.destination,
+        days=trip.days,
+        budget=trip.budget,
+        travel_style="cultural",  # default, bisa ditambahkan ke model nanti
+    )
+    
+    # Update trip with new recommendation
+    trip.ai_recommendation = ai_recommendation
+    db.commit()
+    db.refresh(trip)
+    db.close()
+    
+    return trip
+
 # 7. Endpoint PUT /api/v1/trips/{trip_id} - Update Budget
 @app.put("/api/v1/trips/{trip_id}")
 def update_trip_budget(trip_id: int, request: TripUpdate):
