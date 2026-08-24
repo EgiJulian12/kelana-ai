@@ -1,78 +1,88 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from services.trip_services import (
-    calculate_daily_budget,
-    get_trip_category,
-    get_recomendation_places,
-    get_transportation_recomendation,
-    get_travel_season,
-)
+from services.trip_services import calculate_daily_budget, get_trip_category
 from models.trip import Trip
 from database import SessionLocal, init_db
 from services.bedrock_service import get_ai_recommendation
-
 
 init_db()
 
 app = FastAPI(title="KelanaAI API")
 
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Menggantikan fungsi input() dari console
+
 class TripRequest(BaseModel):
-    destinations: List[str]  # Menerima list destinasi
+    destinations: List[str]
     days: int
     budget: float
     month: str
-    travel_style: str = "cultural"  # default travel style
+    travel_style: str = "cultural"
 
-# Schema untuk update budget pada endpoint PUT
+
 class TripUpdate(BaseModel):
     budget: float
 
-# 1. Root / Welcome Endpoint
+
+# 1. Root
 @app.get("/")
 def home():
     return {"message": "Welcome to KelanaAI"}
 
-# 2. Health Check Endpoint
+
+# 2. Health Check
 @app.get("/health")
 def health_check():
     return {"status": "OK"}
 
-# 3. HOMEWORK / ENDPOINTS 
+
+# 3. Static recommendation endpoints
 @app.get("/api/v1/recommendations")
 def get_recommendations():
     return ["Tokyo Tower", "Mount Fuji", "Shibuya"]
+
 
 @app.get("/api/v1/transportations")
 def get_transportations():
     return ["Bus", "Train", "Flight"]
 
-# 4. Trips Endpoints
+
+# 4. List all trips
 @app.get("/api/v1/trips")
 def list_trips():
     db = SessionLocal()
-    trips = db.query(Trip).all()
-    db.close()
-    return trips
+    try:
+        trips = db.query(Trip).all()
+        return trips
+    finally:
+        db.close()
 
-# 5. Trip_id Endpoints
+
+# 5. Get trip by ID
 @app.get("/api/v1/trips/{trip_id}")
 def get_trip(trip_id: int):
     db = SessionLocal()
-    trip = db.query(Trip).filter(Trip.id == trip_id).first()
-    db.close()
-    # handling not found
-    if trip is None:
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-    return trip
+    try:
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        if trip is None:
+            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+        return trip
+    finally:
+        db.close()
 
 
-# 6. Main Endpoint
+# 6. Create trip with AI recommendation
 @app.post("/api/v1/trips")
 def create_trip(request: TripRequest):
-    # reuse Session 2 business logic
     daily_budget = calculate_daily_budget(request.budget, request.days)
     category     = get_trip_category(request.budget)
 
@@ -83,104 +93,79 @@ def create_trip(request: TripRequest):
         travel_style=request.travel_style,
     )
 
-    # create a Trip ORM object
-    trip = Trip(
-        destination  = ", ".join(request.destinations),
-        days         = request.days,
-        budget       = request.budget,
-        category     = category,
-        daily_budget = daily_budget,
-        ai_recommendation = ai_recommendation,
-    )
-
-    # save to PostgreSQL
     db = SessionLocal()
-    db.add(trip)
-    db.commit()
-    db.refresh(trip)   # get the auto-generated id
-    db.close()
-    return trip
+    try:
+        trip = Trip(
+            destination       = ", ".join(request.destinations),
+            days              = request.days,
+            budget            = request.budget,
+            category          = category,
+            daily_budget      = daily_budget,
+            ai_recommendation = ai_recommendation,
+        )
+        db.add(trip)
+        db.commit()
+        db.refresh(trip)
+        return trip
+    finally:
+        db.close()
 
 
-# 7. Generate AI Recommendation for existing trip
+# 7. Generate / regenerate AI recommendation for existing trip
 @app.post("/api/v1/trips/{trip_id}/generate")
 def generate_trip_recommendation(trip_id: int):
-    """
-    Generate improved AI recommendation for an existing trip.
-    This will fetch the trip from database, generate new AI recommendation,
-    and save it back to the ai_recommendation column.
-    """
     db = SessionLocal()
-    trip = db.query(Trip).filter(Trip.id == trip_id).first()
-    
-    if trip is None:
-        db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-    
-    # Generate new AI recommendation
-    ai_recommendation = get_ai_recommendation(
-        destination=trip.destination,
-        days=trip.days,
-        budget=trip.budget,
-        travel_style="cultural",  # default, bisa ditambahkan ke model nanti
-    )
-    
-    # Update trip with new recommendation
-    trip.ai_recommendation = ai_recommendation
-    db.commit()
-    db.refresh(trip)
-    db.close()
-    
-    return trip
+    try:
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        if trip is None:
+            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
 
-# 7. Endpoint PUT /api/v1/trips/{trip_id} - Update Budget
+        ai_recommendation = get_ai_recommendation(
+            destination=trip.destination,
+            days=trip.days,
+            budget=trip.budget,
+            travel_style="cultural",
+        )
+
+        trip.ai_recommendation = ai_recommendation
+        db.commit()
+        db.refresh(trip)
+        return trip
+    finally:
+        db.close()
+
+
+# 8. Update trip budget
 @app.put("/api/v1/trips/{trip_id}")
 def update_trip_budget(trip_id: int, request: TripUpdate):
     db = SessionLocal()
-    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+    try:
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        if trip is None:
+            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
 
-    # Periksa apakah trip ditemukan
-    if trip is None:
+        trip.budget       = request.budget
+        trip.daily_budget = calculate_daily_budget(request.budget, trip.days)
+        trip.category     = get_trip_category(request.budget)
+
+        db.commit()
+        db.refresh(trip)
+        return trip
+    finally:
         db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-
-    # Hitung ulang (recalculate) nilai category dan daily_budget
-    new_daily_budget = calculate_daily_budget(request.budget, trip.days)
-    new_category = get_trip_category(request.budget)
 
 
-    # Update data pada object trip
-    trip.budget = request.budget
-    trip.daily_budget = new_daily_budget
-    trip.category = new_category
-
-    # Simpan perubahan ke database
-    db.commit()
-    db.refresh(trip)
-    db.close()
-
-    return trip
-
-
-# 8. Endpoint DELETE /api/v1/trips/{trip_id} - Delete Trip
+# 9. Delete trip
 @app.delete("/api/v1/trips/{trip_id}")
 def delete_trip(trip_id: int):
     db = SessionLocal()
-    trip = db.query(Trip).filter(Trip.id == trip_id).first()
+    try:
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        if trip is None:
+            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
 
-    # Periksa apakah trip ditemukan
-    if trip is None:
+        db.delete(trip)
+        db.commit()
+        return {"message": f"Trip with id {trip_id} successfully deleted"}
+    finally:
         db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-
-    # Hapus dari database
-    db.delete(trip)
-    db.commit()
-    db.close()
-
-    return {"message": f"Trip with id {trip_id} successfully deleted"}
-
-
-
-
-

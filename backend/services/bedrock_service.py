@@ -1,9 +1,7 @@
 import os
-import json
 import boto3
-import base64
-import requests
 from dotenv import load_dotenv
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -11,37 +9,47 @@ load_dotenv()
 
 def get_bedrock_client():
     """
-    Build and return a boto3 Bedrock Runtime client.
-    Credentials and region are loaded from the .env file:
-      - AWS_BEARER_TOKEN_BEDROCK  (custom bearer token format)
-      - AWS_REGION
+    Build and return a boto3 Bedrock Runtime client using AWS credentials
+    decoded from AWS_BEARER_TOKEN_BEDROCK (format: base64("accessKey:secretKey"))
+    or standard AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY env vars.
     """
-    bearer_token = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
-    region       = os.getenv("AWS_REGION", "us-east-1")
+    region = os.getenv("AWS_REGION", "us-east-1")
 
-    if not bearer_token:
-        raise ValueError("AWS_BEARER_TOKEN_BEDROCK is not set in the .env file.")
+    # Support standard boto3 env vars first (AWS_ACCESS_KEY_ID, etc.)
+    # then fall back to decoding the bearer token
+    access_key = os.getenv("AWS_ACCESS_KEY_ID")
+    secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+    session_token = os.getenv("AWS_SESSION_TOKEN")
 
-    # Return a custom client wrapper that uses bearer token
-    class BedrockClient:
-        def __init__(self, token, region):
-            self.token = token
-            self.region = region
-            self.endpoint = f"https://bedrock-runtime.{region}.amazonaws.com"
-        
-        def converse(self, modelId, messages):
-            url = f"{self.endpoint}/model/{modelId}/converse"
-            headers = {
-                "Authorization": f"Bearer {self.token}",
-                "Content-Type": "application/json",
-            }
-            payload = {"messages": messages}
-            
-            response = requests.post(url, json=payload, headers=headers)
-            response.raise_for_status()
-            return response.json()
-    
-    return BedrockClient(bearer_token, region)
+    if not access_key or not secret_key:
+        # Try to decode from bearer token: base64("accessKey:secretKey")
+        bearer_token = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+        if not bearer_token:
+            raise ValueError(
+                "AWS credentials not found. Set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY "
+                "or AWS_BEARER_TOKEN_BEDROCK in the .env file."
+            )
+        import base64
+        try:
+            decoded = base64.b64decode(bearer_token + "==").decode("latin-1")
+            if ":" in decoded:
+                access_key, secret_key = decoded.split(":", 1)
+            else:
+                # Token itself is the session token (Bedrock-specific short-lived token)
+                session_token = bearer_token
+                access_key    = os.getenv("AWS_ACCESS_KEY_ID", "")
+                secret_key    = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+        except Exception as e:
+            raise ValueError(f"Failed to decode AWS_BEARER_TOKEN_BEDROCK: {e}")
+
+    client = boto3.client(
+        service_name="bedrock-runtime",
+        region_name=region,
+        aws_access_key_id=access_key or None,
+        aws_secret_access_key=secret_key or None,
+        aws_session_token=session_token or None,
+    )
+    return client
 
 
 # ── AI Recommendation ──────────────────────────────────────────────────────────
@@ -53,7 +61,7 @@ def get_ai_recommendation(
     travel_style: str,
 ) -> str:
     """
-    Call AWS Bedrock and return an AI-generated travel itinerary.
+    Call AWS Bedrock (Converse API) and return an AI-generated travel itinerary.
 
     Parameters
     ----------
@@ -66,8 +74,11 @@ def get_ai_recommendation(
     -------
     The model's response text as a plain string.
     """
+    if days <= 0:
+        raise ValueError("days must be greater than 0")
+
     daily_budget = budget / days
-    
+
     prompt = (
         f"You are an experienced travel planner.\n\n"
         f"Plan a {days}-day itinerary for {destination}.\n\n"
@@ -89,19 +100,24 @@ def get_ai_recommendation(
     )
 
     model_id = os.getenv("MODEL_ID", "amazon.nova-lite-v1:0")
-    client   = get_bedrock_client()
 
-    # Bedrock Converse API — works with Nova, Claude, Titan, etc.
-    response = client.converse(
-        modelId=model_id,
-        messages=[
-            {
-                "role": "user",
-                "content": [{"text": prompt}],
-            }
-        ],
-    )
-
-    # Extract the assistant's reply text
-    result_text = response["output"]["message"]["content"][0]["text"]
-    return result_text
+    try:
+        client   = get_bedrock_client()
+        response = client.converse(
+            modelId=model_id,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [{"text": prompt}],
+                }
+            ],
+        )
+        result_text = response["output"]["message"]["content"][0]["text"]
+        return result_text
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Bedrock API error: {str(e)}"
+        )
