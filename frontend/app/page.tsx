@@ -13,22 +13,22 @@ interface TripResult {
   ai_recommendation: string;
 }
 
-// ── Icon Components ────────────────────────────────────────────────
-const PlaneSVG = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+// ── SVG Icons ──────────────────────────────────────────────────────────
+const PlaneIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
     <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
   </svg>
 );
 
-const MapPinSVG = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const MapPinIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
     <circle cx="12" cy="10" r="3" />
   </svg>
 );
 
-const CalendarSVG = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const CalendarIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
@@ -36,74 +36,102 @@ const CalendarSVG = () => (
   </svg>
 );
 
-const DollarSVG = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const DollarIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <line x1="12" y1="1" x2="12" y2="23" />
     <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
   </svg>
 );
 
-const SparklesSVG = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+const SparklesIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 0l1.5 6H18l-3.75 3 1.5 6L12 12l-3.75 3 1.5-6L6 6h4.5L12 0z" opacity=".5" />
     <path d="M12 2l1.09 4.36H17l-2.73 2.18 1.09 4.36L12 10.5l-3.36 2.4 1.09-4.36L6.91 6.36H11L12 2z" />
   </svg>
 );
 
-const StarSVG = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+const StarIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
   </svg>
 );
 
-const ChevronSVG = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+const ChevronDownIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
     <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
-const GlobeSVG = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+const CompassIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="10" />
-    <line x1="2" y1="12" x2="22" y2="12" />
-    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
   </svg>
 );
 
-const BrainSVG = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <path d="M9.5 2A2.5 2.5 0 017 4.5v0A2.5 2.5 0 014.5 7H4a2 2 0 00-2 2v0a2 2 0 002 2h.09A2.5 2.5 0 017 13.5v0A2.5 2.5 0 019.5 16H10v4a2 2 0 004 0v-4h.5A2.5 2.5 0 0117 13.5v0a2.5 2.5 0 012.91-2.5H20a2 2 0 002-2v0a2 2 0 00-2-2h-.09A2.5 2.5 0 0117 4.5v0A2.5 2.5 0 0114.5 2h-5z" />
+const ShieldCheckIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
   </svg>
 );
 
-const ClockSVG = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
+const ZapIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
 
-// ── Feature Card Data ──────────────────────────────────────────────
-const features = [
-  { icon: <BrainSVG />, label: "AI-Powered", desc: "Smart itinerary generation" },
-  { icon: <GlobeSVG />, label: "Multi-Destination", desc: "Plan multiple stops" },
-  { icon: <ClockSVG />, label: "Instant Results", desc: "Get plans in seconds" },
-];
-
+// ── Constants ──────────────────────────────────────────────────────────
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
 
 const TRAVEL_STYLES = [
-  { value: "cultural", label: "🏛️  Cultural & Sightseeing" },
-  { value: "backpacker", label: "🎒  Backpacker / Budget" },
-  { value: "luxury", label: "💎  Luxury & Relaxing" },
-  { value: "family", label: "👨‍👩‍👧  Family Friendly" },
-  { value: "adventure", label: "🧗  Action & Adventure" },
+  { value: "cultural", label: "🏛️  Wisata Budaya & Sejarah (Cultural)" },
+  { value: "backpacker", label: "🎒  Backpacker / Hemat (Budget)" },
+  { value: "luxury", label: "💎  Mewah & Relaksasi (Luxury)" },
+  { value: "family", label: "👨‍👩‍👧  Keluarga & Anak (Family Friendly)" },
+  { value: "adventure", label: "🧗  Petualangan Alam (Adventure & Nature)" },
+  { value: "culinary", label: "🍜  Eksplorasi Kuliner (Foodie Tour)" },
 ];
 
-// ── Main Component ─────────────────────────────────────────────────
+const POPULAR_DESTINATIONS = [
+  {
+    name: "Tokyo & Kyoto, Jepang",
+    query: "Tokyo, Kyoto, Osaka",
+    image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80",
+    tag: "Favorit Asia",
+    duration: "7 Hari",
+    estBudget: "$1,200",
+  },
+  {
+    name: "Bali & Nusa Penida, Indonesia",
+    query: "Bali, Nusa Penida, Ubud",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
+    tag: "Tropis & Budaya",
+    duration: "5 Hari",
+    estBudget: "$450",
+  },
+  {
+    name: "Swiss Alps & Zurich, Swiss",
+    query: "Zurich, Interlaken, Zermatt",
+    image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80",
+    tag: "Pemandangan Alam",
+    duration: "6 Hari",
+    estBudget: "$1,800",
+  },
+  {
+    name: "Paris & Roma, Eropa",
+    query: "Paris, Rome, Florence",
+    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80",
+    tag: "Romantis & Klasik",
+    duration: "8 Hari",
+    estBudget: "$1,600",
+  },
+];
+
 export default function Home() {
   const [formData, setFormData] = useState({
     destinations: "",
@@ -118,7 +146,15 @@ export default function Home() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectPreset = (destinationString: string) => {
+    setFormData((prev) => ({ ...prev, destinations: destinationString }));
+    const formElement = document.getElementById("planner-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,11 +164,18 @@ export default function Home() {
     setResult(null);
 
     try {
-      if (formData.budget <= 0 || formData.days < 1)
-        throw new Error("Budget dan durasi harus lebih dari 0.");
+      if (formData.budget <= 0 || formData.days < 1) {
+        throw new Error("Budget dan durasi hari harus bernilai lebih dari 0.");
+      }
 
       const destinations = formData.destinations
-        .split(",").map(d => d.trim()).filter(Boolean);
+        .split(",")
+        .map((d) => d.trim())
+        .filter(Boolean);
+
+      if (destinations.length === 0) {
+        throw new Error("Mohon masukkan minimal satu nama destinasi.");
+      }
 
       const res = await fetch("http://localhost:8000/api/v1/trips", {
         method: "POST",
@@ -145,604 +188,388 @@ export default function Home() {
         }),
       });
 
-      if (!res.ok) throw new Error((await res.json()).detail || "Gagal menyusun itinerari AI.");
-      setResult(await res.json());
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.detail || "Gagal menyusun itinerari AI. Pastikan backend aktif.");
+      }
+
+      const data = await res.json();
+      setResult(data);
+
+      setTimeout(() => {
+        const resultEl = document.getElementById("itinerary-result");
+        if (resultEl) {
+          resultEl.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
     } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan.");
+      setError(err.message || "Terjadi kesalahan saat memproses permintaan.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="relative min-h-screen" style={{ backgroundColor: "var(--navy)", overflowX: "hidden" }}>
-
-      {/* ── ANIMATED BACKGROUND LAYER ─────────────────────── */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Grid */}
-        <div className="bg-grid absolute inset-0" />
-
-        {/* Orb 1 — purple, top-left */}
-        <div
-          className="bg-orb-1 absolute"
-          style={{ width: "65vw", height: "65vw", top: "-20%", left: "-15%", opacity: 0.55, filter: "blur(80px)" }}
-        />
-        {/* Orb 2 — blue, top-right */}
-        <div
-          className="bg-orb-2 absolute"
-          style={{ width: "55vw", height: "55vw", top: "-10%", right: "-15%", opacity: 0.5, filter: "blur(90px)" }}
-        />
-        {/* Orb 3 — lavender, mid */}
-        <div
-          className="bg-orb-3 absolute"
-          style={{ width: "40vw", height: "40vw", top: "35%", left: "30%", opacity: 0.3, filter: "blur(100px)" }}
-        />
-
-        {/* Subtle top-center beam */}
-        <div
-          className="absolute"
-          style={{
-            top: "-30%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "2px",
-            height: "70vh",
-            background: "linear-gradient(to bottom, transparent, rgba(124,58,237,0.4), transparent)",
-            filter: "blur(1px)",
-          }}
-        />
+    <div className="relative min-h-screen bg-[#05061a] text-slate-100 flex flex-col selection:bg-purple-600 selection:text-white">
+      
+      {/* ── BACKGROUND GLOW LAYER ─────────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="bg-grid absolute inset-0 opacity-70" />
+        <div className="bg-orb-1 absolute w-[70vw] h-[70vw] -top-[20%] -left-[15%] rounded-full blur-[100px] opacity-40" />
+        <div className="bg-orb-2 absolute w-[60vw] h-[60vw] -top-[10%] -right-[15%] rounded-full blur-[120px] opacity-35" />
+        <div className="bg-orb-3 absolute w-[45vw] h-[45vw] top-[40%] left-[25%] rounded-full blur-[130px] opacity-25" />
       </div>
 
-      {/* ── FLOATING DECORATIVE BADGES ──────────────────── */}
-      <div className="hidden lg:block" style={{ position: "absolute", inset: 0, zIndex: 15, pointerEvents: "none" }}>
-        {/* Left badge */}
-        <div
-          className="floating-badge animate-float"
-          style={{
-            position: "absolute",
-            top: "22%",
-            left: "2%",
-            padding: "10px 18px",
-            borderRadius: 50,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            color: "rgba(255,255,255,0.85)",
-            animationDelay: "0s",
-            pointerEvents: "all",
-          }}
-        >
-          <span style={{ fontSize: "1rem" }}>✈️</span>
-          AI-POWERED TRAVEL
-        </div>
-
-        {/* Right badge */}
-        <div
-          className="floating-badge animate-float"
-          style={{
-            position: "absolute",
-            top: "19%",
-            right: "2%",
-            padding: "10px 18px",
-            borderRadius: 50,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            color: "rgba(255,255,255,0.85)",
-            animationDelay: "1.5s",
-            pointerEvents: "all",
-          }}
-        >
-          <span style={{ fontSize: "1rem" }}>🌍</span>
-          SMART ITINERARY
-        </div>
-
-        {/* Mid-left badge */}
-        <div
-          className="floating-badge animate-float"
-          style={{
-            position: "absolute",
-            top: "32%",
-            left: "1.5%",
-            padding: "10px 16px",
-            borderRadius: 50,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            color: "rgba(255,255,255,0.85)",
-            animationDelay: "0.8s",
-            pointerEvents: "all",
-          }}
-        >
-          <span style={{ fontSize: "1rem" }}>⚡</span>
-          INSTANT PLAN
-        </div>
-      </div>
-
-      {/* ── MAIN CONTENT ────────────────────────────────────── */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-28">
-
-        {/* ── HERO SECTION ─────────────────────────────────── */}
-        <header className="text-center mb-16">
-          {/* Top badge */}
-          <div className="animate-fade-up inline-flex items-center gap-2 mb-8" style={{ animationDelay: "0s" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "6px 16px 6px 8px",
-                borderRadius: 50,
-                background: "rgba(124,58,237,0.12)",
-                border: "1px solid rgba(124,58,237,0.3)",
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                letterSpacing: "0.06em",
-                color: "#a78bfa",
-              }}
-            >
-              <span
-                style={{
-                  background: "linear-gradient(135deg,#7c3aed,#3b82f6)",
-                  borderRadius: 50,
-                  padding: "3px 8px",
-                  fontSize: "0.65rem",
-                  color: "#fff",
-                  fontWeight: 800,
-                  letterSpacing: "0.05em",
-                }}
-              >
-                NEW
+      {/* ── HEADER / NAVBAR ────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 navbar-glass border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          
+          {/* Logo */}
+          <a href="#" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full bg-[#090b29] rounded-[15px] flex items-center justify-center text-purple-400 group-hover:text-cyan-300 transition-colors">
+                <PlaneIcon />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+                Kelana<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">AI</span>
               </span>
-              Plan Smarter With KelanaAI
+              <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                Smart Travel Assistant
+              </span>
             </div>
-          </div>
+          </a>
 
-          {/* Main heading */}
-          <h1
-            className="animate-fade-up delay-100"
-            style={{
-              fontSize: "clamp(2.6rem, 6vw, 4.2rem)",
-              fontWeight: 900,
-              lineHeight: 1.08,
-              letterSpacing: "-0.035em",
-              marginBottom: "1.5rem",
-              color: "#fff",
-            }}
-          >
-            Save Time &amp; Money
-            <br />
-            <span className="text-gradient">On Every Trip</span>
+          {/* Nav links (Desktop) */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            <a href="#destinasi" className="hover:text-purple-400 transition-colors">Destinasi</a>
+            <a href="#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a>
+            <a href="#planner-form" className="hover:text-purple-400 transition-colors">Rencanakan Trip</a>
+          </nav>
+
+          {/* CTA Button */}
+          <div className="flex items-center gap-3">
+            <a
+              href="#planner-form"
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              <SparklesIcon />
+              <span>Mulai Rencana</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* ── HERO SECTION WITH DESTINATION IMAGE ────────────────────── */}
+      <section className="relative z-10 pt-10 sm:pt-14 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        
+        {/* Top Announcement Badge */}
+        <div className="flex justify-center mb-6 animate-fade-up">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold backdrop-blur-md shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span>AI Travel Itinerary Generator Generasi Baru</span>
+            <span className="text-slate-400">| Sesi 6</span>
+          </div>
+        </div>
+
+        {/* Hero Title & Subtitle */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] mb-5">
+            Jelajahi Dunia Lebih Mudah dengan <span className="text-gradient">KelanaAI</span>
           </h1>
-
-          {/* Sub heading */}
-          <p
-            className="animate-fade-up delay-200"
-            style={{
-              fontSize: "1rem",
-              color: "rgba(148,163,184,0.8)",
-              maxWidth: "520px",
-              margin: "0 auto 2.5rem",
-              lineHeight: 1.75,
-              fontWeight: 400,
-            }}
-          >
-            Discover the best destinations, get personalized AI recommendations,
-            and craft your perfect itinerary effortlessly in seconds.
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto">
+            Rencanakan liburan impian Anda dalam hitungan detik. Dapatkan rekomendasi itinerari personal, estimasi anggaran terperinci, dan rute perjalanan pintar berbasis kecerdasan buatan.
           </p>
+        </div>
 
-          {/* Stats row */}
-          <div
-            className="animate-fade-up delay-300"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "2.5rem",
-              flexWrap: "wrap",
-              marginBottom: "3rem",
-            }}
-          >
-            {[
-              { value: "13,200+", label: "Trips Planned" },
-              { value: "98%", label: "Satisfaction" },
-              { value: "120+", label: "Countries" },
-            ].map(stat => (
-              <div key={stat.label} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#f1f5f9", letterSpacing: "-0.02em" }}>
-                  {stat.value}
-                </div>
-                <div style={{ fontSize: "0.72rem", color: "rgba(148,163,184,0.6)", fontWeight: 500, letterSpacing: "0.04em", marginTop: 2 }}>
-                  {stat.label}
-                </div>
+        {/* ── HERO DESTINATION IMAGE SHOWCASE BANNER ─────────────────── */}
+        <div className="relative rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl shadow-purple-950/60 mb-16 group">
+          {/* Main Hero Destination Image */}
+          <div className="relative h-64 sm:h-96 md:h-[450px] w-full overflow-hidden bg-slate-900">
+            <img
+              src="/assets/airplane_3d_hero.jpg"
+              alt="Destinasi Wisata Impian KelanaAI"
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            {/* Ambient Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#05061a] via-[#05061a]/40 to-transparent" />
+            <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#05061a]/30 to-[#05061a]/80" />
+            
+            {/* Top Floating Badge on Image */}
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-950/70 border border-white/20 backdrop-blur-md text-xs sm:text-sm font-semibold text-white shadow-lg">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping inline-block" />
+              <span>Destinasi Populer Terpilih</span>
+            </div>
+
+            {/* Quick Deal Badge */}
+            <div className="hidden sm:flex absolute top-6 right-6 items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/80 border border-purple-500/40 backdrop-blur-md shadow-xl">
+              <div className="text-left">
+                <span className="text-[10px] text-purple-300 font-bold uppercase tracking-wider block">Hemat Anggaran</span>
+                <span className="text-sm font-black text-white">Rute Multi-Kota AI</span>
               </div>
-            ))}
-          </div>
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-1 rounded-xl font-black text-xs text-white">
+                Diskon 35%
+              </div>
+            </div>
 
-          {/* ── 3D VISUAL SHOWCASE BANNER (Airlume-Inspired) ── */}
-          <div
-            className="animate-fade-up delay-400 glass-card"
-            style={{
-              borderRadius: 24,
-              position: "relative",
-              overflow: "hidden",
-              marginBottom: "3.5rem",
-              border: "1px solid rgba(124, 58, 237, 0.3)",
-              boxShadow: "0 20px 60px -15px rgba(124, 58, 237, 0.25), 0 0 40px rgba(59, 130, 246, 0.15)",
-            }}
-          >
-            <div style={{ position: "relative", height: "320px", width: "100%" }}>
-              {/* 3D Airplane & Mountain Image */}
-              <img
-                src="/assets/airplane_3d_hero.jpg"
-                alt="3D Airplane flying over glowing mountains"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center 35%",
-                  filter: "brightness(0.9) contrast(1.05)",
-                }}
-              />
-
-              {/* Gradient overlays for seamless blend */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(to top, rgba(5,6,26,0.95) 0%, rgba(5,6,26,0.3) 40%, rgba(5,6,26,0.5) 100%)",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "radial-gradient(ellipse at center, transparent 40%, rgba(5,6,26,0.8) 100%)",
-                }}
-              />
-
-              {/* Top Left Floating Tag */}
-              <div
-                className="floating-badge"
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  left: "20px",
-                  padding: "8px 14px",
-                  borderRadius: 50,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  color: "#fff",
-                  background: "rgba(10, 13, 40, 0.75)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                }}
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
-                <span>Scanning 200+ Airlines in Real-Time</span>
+            {/* Bottom Overlay Text Content */}
+            <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-1 inline-flex items-center gap-1.5">
+                  <CompassIcon /> Eksplorasi Tanpa Batas
+                </span>
+                <h2 className="text-xl sm:text-3xl font-extrabold text-white">
+                  Rencanakan Petualangan Tak Terlupakan
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 max-w-xl mt-1 hidden sm:block">
+                  Pilih salah satu rekomendasi rute terpopuler di bawah ini atau tentukan destinasi Anda sendiri.
+                </p>
               </div>
 
-              {/* Top Right Mini Fare Card */}
-              <div
-                className="hidden sm:flex"
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "20px",
-                  padding: "10px 16px",
-                  borderRadius: 16,
-                  alignItems: "center",
-                  gap: 12,
-                  background: "rgba(12, 15, 46, 0.8)",
-                  backdropFilter: "blur(16px)",
-                  border: "1px solid rgba(124, 58, 237, 0.4)",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
-                }}
-              >
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: "0.68rem", color: "#a78bfa", fontWeight: 700, textTransform: "uppercase" }}>Best Deal Found</div>
-                  <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#fff" }}>TYO ⇄ OSAKA</div>
-                  <div style={{ fontSize: "0.7rem", color: "#34d399", fontWeight: 600 }}>Save 35% with AI Route</div>
-                </div>
-                <div
-                  style={{
-                    background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
-                    padding: "6px 12px",
-                    borderRadius: 10,
-                    fontWeight: 800,
-                    fontSize: "0.9rem",
-                    color: "#fff",
-                  }}
+              {/* Destination Pill Shortcuts */}
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => handleSelectPreset("Tokyo, Kyoto, Osaka")}
+                  className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-purple-600/60 border border-white/20 hover:border-purple-400 text-xs font-medium text-white backdrop-blur-md transition-all active:scale-95 cursor-pointer"
                 >
-                  $179
-                </div>
-              </div>
-
-              {/* Bottom Info Banner */}
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "20px",
-                  left: "20px",
-                  right: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                  flexWrap: "wrap",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-purple-400 mb-1 flex items-center gap-2">
-                    <span>🏔️ AI Altitude & Mountain Route Engine</span>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-extrabold text-white">
-                    Smart Scenic Routing &amp; Flight Optimization
-                  </h3>
-                </div>
-
-                {/* Preset destination quick pills */}
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { name: "Tokyo, Kyoto, Osaka", label: "🇯🇵 Japan Trio" },
-                    { name: "Zurich, Zermatt, Interlaken", label: "🇨🇭 Swiss Alps" },
-                    { name: "Reykjavik, Vik, Akureyri", label: "🇮🇸 Iceland Aura" },
-                  ].map(preset => (
-                    <button
-                      key={preset.label}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, destinations: preset.name }))}
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: 20,
-                        fontSize: "0.72rem",
-                        fontWeight: 600,
-                        color: "#e2e8f0",
-                        background: "rgba(255, 255, 255, 0.08)",
-                        backdropFilter: "blur(10px)",
-                        border: "1px solid rgba(255, 255, 255, 0.15)",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.background = "rgba(124, 58, 237, 0.35)";
-                        e.currentTarget.style.borderColor = "rgba(124, 58, 237, 0.6)";
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
-                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                        e.currentTarget.style.transform = "translateY(0)";
-                      }}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
+                  🇯🇵 Tokyo & Kyoto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectPreset("Bali, Nusa Penida, Ubud")}
+                  className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-purple-600/60 border border-white/20 hover:border-purple-400 text-xs font-medium text-white backdrop-blur-md transition-all active:scale-95 cursor-pointer"
+                >
+                  🇮🇩 Bali & Lombok
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectPreset("Zurich, Interlaken, Zermatt")}
+                  className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-purple-600/60 border border-white/20 hover:border-purple-400 text-xs font-medium text-white backdrop-blur-md transition-all active:scale-95 cursor-pointer"
+                >
+                  🇨🇭 Swiss Alps
+                </button>
               </div>
             </div>
           </div>
-        </header>
+        </div>
 
-        {/* ── MAIN FORM CARD ───────────────────────────────── */}
-        <div
-          className="glass-card animate-scale-in delay-200"
-          style={{ borderRadius: 28, padding: "2px", marginBottom: "3.5rem", position: "relative" }}
-        >
-          {/* Top glow line */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "60%",
-              height: "1px",
-              background: "linear-gradient(to right, transparent, rgba(124,58,237,0.8), rgba(59,130,246,0.6), transparent)",
-              borderRadius: 1,
-            }}
-          />
-
-          {/* Corner accents */}
-          <div style={{ position: "absolute", top: -1, left: -1, width: 24, height: 24, borderTop: "2px solid rgba(124,58,237,0.6)", borderLeft: "2px solid rgba(124,58,237,0.6)", borderRadius: "8px 0 0 0" }} />
-          <div style={{ position: "absolute", top: -1, right: -1, width: 24, height: 24, borderTop: "2px solid rgba(59,130,246,0.6)", borderRight: "2px solid rgba(59,130,246,0.6)", borderRadius: "0 8px 0 0" }} />
-          <div style={{ position: "absolute", bottom: -1, left: -1, width: 24, height: 24, borderBottom: "2px solid rgba(124,58,237,0.4)", borderLeft: "2px solid rgba(124,58,237,0.4)", borderRadius: "0 0 0 8px" }} />
-          <div style={{ position: "absolute", bottom: -1, right: -1, width: 24, height: 24, borderBottom: "2px solid rgba(59,130,246,0.4)", borderRight: "2px solid rgba(59,130,246,0.4)", borderRadius: "0 0 8px 0" }} />
-
-          <div style={{ borderRadius: 26, padding: "2.5rem 2.5rem 2rem" }}>
-            {/* Form header */}
-            <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: 12 }}>
-              <div
-                style={{
-                  width: 40, height: 40, borderRadius: 12,
-                  background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.2))",
-                  border: "1px solid rgba(124,58,237,0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#a78bfa",
-                }}
-              >
-                <PlaneSVG />
+        {/* ── STATS ROW ──────────────────────────────────────────────── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-16">
+          {[
+            { value: "15,000+", label: "Itinerari Dibuat" },
+            { value: "98.5%", label: "Tingkat Kepuasan" },
+            { value: "120+", label: "Negara Terjangkau" },
+            { value: "< 5 Detik", label: "Waktu Proses AI" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="glass-card rounded-2xl p-4 sm:p-5 text-center border border-white/5 hover:border-purple-500/30 transition-colors"
+            >
+              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+                {stat.value}
               </div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: "1rem", color: "#f1f5f9" }}>Plan Your Trip</div>
-                <div style={{ fontSize: "0.75rem", color: "rgba(148,163,184,0.6)" }}>Fill in the details below and let AI do the rest</div>
+              <div className="text-xs sm:text-sm text-slate-400 font-medium mt-1">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── RESPONSIVE TRIP PLANNER FORM CARD ──────────────────────── */}
+        <div id="planner-form" className="scroll-mt-28 mb-20">
+          <div className="glass-card rounded-3xl p-6 sm:p-10 border border-purple-500/20 shadow-2xl relative overflow-hidden">
+            
+            {/* Top decorative gradient border */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
+            
+            {/* Form Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                  <PlaneIcon />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Formulir Rencana Perjalanan
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400">
+                    Lengkapi preferensi di bawah dan biarkan AI menyusun itinerari otomatis
+                  </p>
+                </div>
+              </div>
+              <div className="inline-flex items-center gap-2 self-start sm:self-auto px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                <ShieldCheckIcon /> Bebas Repot & Cepat
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-
-              {/* Destination field */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.7rem", fontWeight: 700, color: "rgba(148,163,184,0.7)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                    <MapPinSVG /> Destinasi
+            {/* Main Form - Mobile First Responsive Stacking */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Destination Input (Full Width) */}
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <label htmlFor="destinations-input" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <MapPinIcon />
+                    <span>Destinasi Tujuan</span>
+                    <span className="text-purple-400">*</span>
                   </label>
-                  <span className="text-[11px] text-slate-500">Pisahkan dengan koma (,) untuk multi-kota</span>
+                  <span className="text-[11px] text-slate-400">
+                    Bisa multi-tujuan, pisahkan dengan koma (contoh: Tokyo, Kyoto, Osaka)
+                  </span>
                 </div>
-                <input
-                  id="destinations-input"
-                  type="text"
-                  name="destinations"
-                  value={formData.destinations}
-                  onChange={handleChange}
-                  placeholder="e.g. Tokyo, Kyoto, Osaka"
-                  className="glass-input"
-                  style={{ width: "100%", padding: "1rem 1.25rem", fontSize: "0.95rem" }}
-                  required
-                />
+                <div className="relative">
+                  <input
+                    id="destinations-input"
+                    type="text"
+                    name="destinations"
+                    value={formData.destinations}
+                    onChange={handleChange}
+                    placeholder="Masukkan kota atau negara tujuan (e.g. Bali, Lombok / Paris, Roma)"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    required
+                  />
+                </div>
               </div>
 
-              {/* Row: Days + Budget + Month */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1.25rem" }}>
-                <div>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.7rem", fontWeight: 700, color: "rgba(148,163,184,0.7)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.6rem" }}>
-                    <CalendarSVG /> Durasi
+              {/* Responsive Grid for Duration, Budget, and Month */}
+              {/* On mobile (<640px): 1 column (stacks vertically) */}
+              {/* On tablet/desktop (>=640px): 3 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                {/* Duration Input */}
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="days-input" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <CalendarIcon />
+                    <span>Durasi Perjalanan</span>
+                    <span className="text-purple-400">*</span>
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <div className="relative">
                     <input
                       id="days-input"
                       type="number"
                       name="days"
                       min="1"
+                      max="30"
                       value={formData.days}
                       onChange={handleChange}
-                      className="glass-input"
-                      style={{ width: "100%", padding: "1rem 3.5rem 1rem 1.25rem", fontSize: "0.95rem" }}
+                      className="w-full pl-4 pr-14 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white text-sm sm:text-base focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                       required
                     />
-                    <span style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", fontSize: "0.75rem", color: "rgba(148,163,184,0.5)", fontWeight: 600 }}>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
                       Hari
                     </span>
                   </div>
                 </div>
 
-                <div>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.7rem", fontWeight: 700, color: "rgba(148,163,184,0.7)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.6rem" }}>
-                    <DollarSVG /> Budget
+                {/* Budget Input */}
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="budget-input" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <DollarIcon />
+                    <span>Total Estimasi Budget</span>
+                    <span className="text-purple-400">*</span>
                   </label>
-                  <div style={{ position: "relative" }}>
-                    <span style={{ position: "absolute", left: "1.1rem", top: "50%", transform: "translateY(-50%)", fontSize: "0.8rem", color: "rgba(148,163,184,0.5)", fontWeight: 700 }}>
-                      USD
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">
+                      USD ($)
                     </span>
                     <input
                       id="budget-input"
                       type="number"
                       name="budget"
-                      min="1"
+                      min="10"
+                      step="10"
                       value={formData.budget}
                       onChange={handleChange}
-                      className="glass-input"
-                      style={{ width: "100%", padding: "1rem 1.25rem 1rem 3.5rem", fontSize: "0.95rem" }}
+                      className="w-full pl-20 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white text-sm sm:text-base focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                       required
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.7rem", fontWeight: 700, color: "rgba(148,163,184,0.7)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.6rem" }}>
-                    <CalendarSVG /> Bulan
+                {/* Month Selector */}
+                <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-1">
+                  <label htmlFor="month-select" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <CalendarIcon />
+                    <span>Bulan Keberangkatan</span>
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <div className="relative">
                     <select
                       id="month-select"
                       name="month"
                       value={formData.month}
                       onChange={handleChange}
-                      className="glass-input"
-                      style={{ width: "100%", padding: "1rem 2.5rem 1rem 1.25rem", fontSize: "0.95rem", appearance: "none", cursor: "pointer" }}
+                      className="w-full px-4 py-3.5 pr-10 rounded-2xl bg-white/5 border border-white/10 text-white text-sm sm:text-base appearance-none focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 cursor-pointer transition-all"
                     >
-                      {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                      {MONTHS.map((m) => (
+                        <option key={m} value={m} className="bg-[#0c0f2e] text-white">
+                          {m}
+                        </option>
+                      ))}
                     </select>
-                    <span style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", color: "rgba(148,163,184,0.4)", pointerEvents: "none" }}>
-                      <ChevronSVG />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                      <ChevronDownIcon />
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Travel style */}
-              <div>
-                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.7rem", fontWeight: 700, color: "rgba(148,163,184,0.7)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.6rem" }}>
-                  <SparklesSVG /> Gaya Perjalanan
+              {/* Travel Style Selector (Full Width) */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="travel-style-select" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300">
+                  <SparklesIcon />
+                  <span>Gaya & Preferensi Liburan</span>
                 </label>
-                <div style={{ position: "relative" }}>
+                <div className="relative">
                   <select
                     id="travel-style-select"
                     name="travel_style"
                     value={formData.travel_style}
                     onChange={handleChange}
-                    className="glass-input"
-                    style={{ width: "100%", padding: "1rem 2.5rem 1rem 1.25rem", fontSize: "0.95rem", appearance: "none", cursor: "pointer" }}
+                    className="w-full px-4 py-3.5 pr-10 rounded-2xl bg-white/5 border border-white/10 text-white text-sm sm:text-base appearance-none focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 cursor-pointer transition-all"
                   >
-                    {TRAVEL_STYLES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    {TRAVEL_STYLES.map((style) => (
+                      <option key={style.value} value={style.value} className="bg-[#0c0f2e] text-white">
+                        {style.label}
+                      </option>
+                    ))}
                   </select>
-                  <span style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", color: "rgba(148,163,184,0.4)", pointerEvents: "none" }}>
-                    <ChevronSVG />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <ChevronDownIcon />
                   </span>
                 </div>
               </div>
 
-              {/* Error */}
+              {/* Error Message */}
               {error && (
-                <div
-                  style={{
-                    padding: "1rem 1.25rem",
-                    borderRadius: 14,
-                    background: "rgba(239,68,68,0.08)",
-                    border: "1px solid rgba(239,68,68,0.2)",
-                    color: "#f87171",
-                    fontSize: "0.875rem",
-                    fontWeight: 500,
-                  }}
-                >
-                  ⚠️ {error}
+                <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm flex items-start gap-3">
+                  <span className="text-lg">⚠️</span>
+                  <span>{error}</span>
                 </div>
               )}
 
-              {/* Submit button */}
-              <div style={{ paddingTop: "0.5rem", display: "flex", justifyContent: "center" }}>
+              {/* Submit Action Button */}
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   id="search-trip-btn"
                   type="submit"
                   disabled={loading}
-                  className={loading ? "" : "btn-glow"}
-                  style={{
-                    minWidth: 240,
-                    padding: "1rem 2.5rem",
-                    borderRadius: 50,
-                    border: "none",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    fontWeight: 700,
-                    fontSize: "0.9rem",
-                    letterSpacing: "0.03em",
-                    color: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 10,
-                    background: loading
-                      ? "rgba(255,255,255,0.06)"
-                      : "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #3b82f6 100%)",
-                    transition: "all 0.3s ease",
-                  }}
+                  className={`w-full sm:w-auto min-w-[280px] px-8 py-4 rounded-full font-bold text-sm sm:text-base text-white flex items-center justify-center gap-3 transition-all ${
+                    loading
+                      ? "bg-slate-800 text-slate-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:via-indigo-500 hover:to-blue-500 shadow-xl shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  }`}
                 >
                   {loading ? (
                     <>
                       <span className="spinner" />
-                      <span>Generating Itinerary…</span>
+                      <span>Sedang Menyusun Itinerari AI...</span>
                     </>
                   ) : (
                     <>
-                      <span>✦</span>
-                      <span>Search Trip Now</span>
+                      <SparklesIcon />
+                      <span>Buat Itinerari Sekarang</span>
                     </>
                   )}
                 </button>
@@ -751,294 +578,328 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── 3D INTERACTIVE CARDS & FEATURES (Pinterest Reference Style) ── */}
-        <div className="mb-16">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold tracking-wider uppercase mb-3">
-              ✦ AI-Powered Features
-            </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">
-              Travel Effortless with <span className="text-gradient">Kelana AI</span>
-            </h2>
-            <p className="text-sm text-slate-400 mt-2 max-w-lg mx-auto">
-              Enjoy seamless booking, smarter flight predictions, and personalized mountain-to-city itineraries.
-            </p>
-          </div>
-
-          <div
-            className="animate-fade-up delay-500"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "1.5rem",
-            }}
-          >
-            {/* Card 1: 3D Mountain Explorer */}
-            <div
-              className="glass-card glass-card-hover group"
-              style={{
-                borderRadius: 24,
-                overflow: "hidden",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                position: "relative",
-              }}
-            >
-              <div style={{ height: "180px", overflow: "hidden", position: "relative" }}>
-                <img
-                  src="/assets/mountain_3d_card.jpg"
-                  alt="3D Mountain Scenic Optimizer"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    transition: "transform 0.5s ease",
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "linear-gradient(to top, rgba(12, 15, 46, 1) 0%, rgba(12, 15, 46, 0.2) 60%, transparent 100%)",
-                  }}
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 12,
-                    left: 12,
-                    background: "rgba(124, 58, 237, 0.8)",
-                    backdropFilter: "blur(8px)",
-                    color: "#fff",
-                    fontSize: "0.68rem",
-                    fontWeight: 800,
-                    padding: "4px 10px",
-                    borderRadius: 20,
-                  }}
-                >
-                  🏔️ MOUNTAIN &amp; TRAILS
-                </span>
-              </div>
-              <div style={{ padding: "1.25rem 1.5rem 1.5rem" }}>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", marginBottom: "0.4rem" }}>
-                  Smart Route Optimization
-                </h3>
-                <p style={{ fontSize: "0.8rem", color: "rgba(148, 163, 184, 0.8)", lineHeight: 1.6 }}>
-                  AI analyzes altitude, scenic viewpoints, and travel terrain to craft the ultimate roadtrip.
-                </p>
-                <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: 6, color: "#a78bfa", fontSize: "0.75rem", fontWeight: 700 }}>
-                  <span>Explore Route Features</span>
-                  <span>→</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: 3D Airplane Flight Fare Predictor */}
-            <div
-              className="glass-card glass-card-hover group"
-              style={{
-                borderRadius: 24,
-                overflow: "hidden",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                position: "relative",
-              }}
-            >
-              <div style={{ height: "180px", overflow: "hidden", position: "relative" }}>
-                <img
-                  src="/assets/airplane_3d_hero.jpg"
-                  alt="3D Airplane Fare Predictor"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center 20%",
-                    transition: "transform 0.5s ease",
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "linear-gradient(to top, rgba(12, 15, 46, 1) 0%, rgba(12, 15, 46, 0.2) 60%, transparent 100%)",
-                  }}
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 12,
-                    left: 12,
-                    background: "rgba(59, 130, 246, 0.8)",
-                    backdropFilter: "blur(8px)",
-                    color: "#fff",
-                    fontSize: "0.68rem",
-                    fontWeight: 800,
-                    padding: "4px 10px",
-                    borderRadius: 20,
-                  }}
-                >
-                  ✈️ REAL-TIME RADAR
-                </span>
-              </div>
-              <div style={{ padding: "1.25rem 1.5rem 1.5rem" }}>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", marginBottom: "0.4rem" }}>
-                  AI Flight &amp; Fare Predictor
-                </h3>
-                <p style={{ fontSize: "0.8rem", color: "rgba(148, 163, 184, 0.8)", lineHeight: 1.6 }}>
-                  Scans hundreds of flights globally to predict fare drops and secure the best ticket prices.
-                </p>
-                <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: 6, color: "#60a5fa", fontSize: "0.75rem", fontWeight: 700 }}>
-                  <span>View Prediction Engine</span>
-                  <span>→</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: 3D Smart Luggage & Terminal */}
-            <div
-              className="glass-card glass-card-hover group"
-              style={{
-                borderRadius: 24,
-                overflow: "hidden",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                position: "relative",
-              }}
-            >
-              <div style={{ height: "180px", overflow: "hidden", position: "relative" }}>
-                <img
-                  src="/assets/suitcase_3d_card.jpg"
-                  alt="3D Smart Travel Luggage & Terminal"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    transition: "transform 0.5s ease",
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "linear-gradient(to top, rgba(12, 15, 46, 1) 0%, rgba(12, 15, 46, 0.2) 60%, transparent 100%)",
-                  }}
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 12,
-                    left: 12,
-                    background: "rgba(236, 72, 153, 0.8)",
-                    backdropFilter: "blur(8px)",
-                    color: "#fff",
-                    fontSize: "0.68rem",
-                    fontWeight: 800,
-                    padding: "4px 10px",
-                    borderRadius: 20,
-                  }}
-                >
-                  🧳 BUDGET &amp; PACKING
-                </span>
-              </div>
-              <div style={{ padding: "1.25rem 1.5rem 1.5rem" }}>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", marginBottom: "0.4rem" }}>
-                  Automated Budget Breakdown
-                </h3>
-                <p style={{ fontSize: "0.8rem", color: "rgba(148, 163, 184, 0.8)", lineHeight: 1.6 }}>
-                  Generates day-by-day itemized cost analysis for hotel, transportation, food, and activities.
-                </p>
-                <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: 6, color: "#f472b6", fontSize: "0.75rem", fontWeight: 700 }}>
-                  <span>Calculate Trip Budget</span>
-                  <span>→</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        {/* ── RESULT SECTION ───────────────────────────────── */}
+        {/* ── RESULT ITINERARY SECTION ───────────────────────────────── */}
         {result && !loading && (
-          <div
-            className="glass-card animate-scale-in"
-            style={{ borderRadius: 28, padding: "2.5rem", position: "relative", overflow: "hidden" }}
-          >
-            {/* Top accent */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0, left: 0, right: 0,
-                height: 3,
-                background: "linear-gradient(to right, #7c3aed, #4f46e5, #3b82f6, #22d3ee)",
-              }}
-            />
+          <div id="itinerary-result" className="scroll-mt-28 mb-20 animate-scale-in">
+            <div className="glass-card rounded-3xl p-6 sm:p-10 border border-purple-500/30 shadow-2xl relative overflow-hidden">
+              
+              {/* Header Gradient */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-400 to-indigo-500" />
 
-            {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "2rem" }}>
-              <div
-                style={{
-                  width: 36, height: 36, borderRadius: 10,
-                  background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#fff", flexShrink: 0,
-                }}
-              >
-                <StarSVG />
-              </div>
-              <div>
-                <h2 style={{ fontWeight: 800, fontSize: "1.15rem", color: "#f1f5f9", margin: 0 }}>
-                  Your Personalized Trip
-                </h2>
-                <p style={{ fontSize: "0.75rem", color: "rgba(148,163,184,0.6)", margin: "2px 0 0" }}>
-                  AI-generated itinerary ready to explore
-                </p>
-              </div>
-            </div>
-
-            {/* Info cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
-              {[
-                { label: "Destinasi", value: result.destination, accent: false },
-                { label: "Durasi", value: `${result.days} Hari`, accent: false },
-                { label: "Total Budget", value: `$${result.budget}`, accent: false },
-                { label: "Kategori", value: result.category, accent: true },
-              ].map(info => (
-                <div key={info.label} className="result-info-card">
-                  <p style={{ fontSize: "0.65rem", color: "rgba(148,163,184,0.55)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, marginBottom: "0.4rem" }}>
-                    {info.label}
-                  </p>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 700, color: info.accent ? "#a78bfa" : "#f1f5f9", margin: 0 }}>
-                    {info.value}
-                  </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center text-white shadow-lg">
+                    <StarIcon />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-black text-white">
+                      Rencana Perjalanan Pribadi Anda
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-400">
+                      Disusun otomatis oleh KelanaAI khusus untuk kebutuhan Anda
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Divider */}
-            <div style={{ height: 1, background: "rgba(255,255,255,0.06)", marginBottom: "2rem" }} />
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/10 transition-colors"
+                >
+                  🖨️ Cetak / Simpan PDF
+                </button>
+              </div>
 
-            {/* AI Recommendation */}
-            <div className="itinerary-prose">
-              <MarkdownItinerary content={result.ai_recommendation} />
+              {/* Trip Summary Pills */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                    Destinasi
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-white">
+                    {result.destination}
+                  </span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                    Durasi
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-white">
+                    {result.days} Hari
+                  </span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                    Total Anggaran
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-emerald-400">
+                    ${result.budget}
+                  </span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                    Gaya Liburan
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-purple-300">
+                    {result.category}
+                  </span>
+                </div>
+              </div>
+
+              {/* Markdown Content Output */}
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#090b24]/80 border border-white/10 itinerary-prose">
+                <MarkdownItinerary content={result.ai_recommendation} />
+              </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* ── FOOTER ──────────────────────────────────────────── */}
-      <footer
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-          padding: "2rem 1.5rem",
-          textAlign: "center",
-          color: "rgba(148,163,184,0.4)",
-          fontSize: "0.78rem",
-          fontWeight: 500,
-          letterSpacing: "0.02em",
-        }}
-      >
-        © 2026 KelanaAI — AI-Powered Travel Planning. All rights reserved.
+        {/* ── POPULAR DESTINATIONS SHOWCASE SECTION ──────────────────── */}
+        <section id="destinasi" className="scroll-mt-28 mb-20">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold tracking-wider uppercase mb-3">
+              🌍 Inspirasi Liburan
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Destinasi Pilihan Terpopuler
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+              Klik salah satu destinasi untuk mengisi formulir secara otomatis dan mulai petualangan Anda.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {POPULAR_DESTINATIONS.map((dest) => (
+              <div
+                key={dest.name}
+                onClick={() => handleSelectPreset(dest.query)}
+                className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover border border-white/10 cursor-pointer flex flex-col"
+              >
+                {/* Destination Card Image */}
+                <div className="relative h-48 w-full overflow-hidden bg-slate-900">
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f2e] via-transparent to-transparent" />
+                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/80 backdrop-blur-md text-[11px] font-bold text-white">
+                    {dest.tag}
+                  </span>
+                </div>
+
+                {/* Card Info */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-base text-white group-hover:text-purple-300 transition-colors">
+                      {dest.name}
+                    </h3>
+                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-2">
+                      <span>⏱️ {dest.duration}</span>
+                      <span>•</span>
+                      <span>Est. {dest.estBudget}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-purple-400">
+                    <span>Pilih Destinasi</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 3D VISUAL & AI FEATURES SHOWCASE ───────────────────────── */}
+        <section id="fitur" className="scroll-mt-28 mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold tracking-wider uppercase mb-3">
+              ✦ Fitur Unggulan
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Mengapa Memilih <span className="text-gradient">KelanaAI</span>?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+              Didukung teknologi AI termutakhir untuk pengalaman perencanaan liburan tanpa stres.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Feature 1 */}
+            <div className="glass-card glass-card-hover rounded-3xl overflow-hidden border border-white/10 group flex flex-col">
+              <div className="h-44 overflow-hidden relative bg-slate-900">
+                <img
+                  src="/assets/mountain_3d_card.jpg"
+                  alt="Optimasi Rute Cerdas"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f2e] via-[#0c0f2e]/20 to-transparent" />
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/80 backdrop-blur-md text-[11px] font-bold text-white">
+                  🏔️ RUTE EFISIEN
+                </span>
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">
+                    Optimasi Rute Cerdas
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                    AI menghitung jarak dan urutan kunjungan terbaik agar waktu Anda di jalan lebih hemat dan efisien.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs font-bold text-purple-400">
+                  <ZapIcon />
+                  <span>Hemat hingga 40% waktu perjalanan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="glass-card glass-card-hover rounded-3xl overflow-hidden border border-white/10 group flex flex-col">
+              <div className="h-44 overflow-hidden relative bg-slate-900">
+                <img
+                  src="/assets/airplane_3d_hero.jpg"
+                  alt="Rekomendasi Musim & Waktu"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f2e] via-[#0c0f2e]/20 to-transparent" />
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-blue-600/80 backdrop-blur-md text-[11px] font-bold text-white">
+                  ✈️ PREDIKSI MUSIM
+                </span>
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">
+                    Rekomendasi Sesuai Musim
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                    Menyesuaikan agenda harian dengan cuaca, festival lokal, serta musim terbaik di destinasi tujuan.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs font-bold text-cyan-400">
+                  <SparklesIcon />
+                  <span>Rekomendasi dinamis 12 bulan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="glass-card glass-card-hover rounded-3xl overflow-hidden border border-white/10 group flex flex-col">
+              <div className="h-44 overflow-hidden relative bg-slate-900">
+                <img
+                  src="/assets/suitcase_3d_card.jpg"
+                  alt="Transparansi Estimasi Biaya"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f2e] via-[#0c0f2e]/20 to-transparent" />
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-pink-600/80 backdrop-blur-md text-[11px] font-bold text-white">
+                  🧳 ESTIMASI ANGGARAN
+                </span>
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">
+                    Rincian Anggaran Transparan
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                    Dapatkan pembagian budget realistis untuk akomodasi, kuliner, transportasi, dan tiket wisata.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs font-bold text-pink-400">
+                  <DollarIcon />
+                  <span>Sesuai limit anggaran pengguna</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </section>
+
+      {/* ── COMPREHENSIVE FOOTER ────────────────────────────────────── */}
+      <footer className="mt-auto relative z-10 border-t border-white/10 bg-[#040515]/90 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+            
+            {/* Brand column (2 spans) */}
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center text-white shadow-md">
+                  <PlaneIcon />
+                </div>
+                <span className="text-xl font-black tracking-tight text-white">
+                  Kelana<span className="text-purple-400">AI</span>
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
+                KelanaAI adalah platform asisten perjalanan pintar berbasis Artificial Intelligence yang mempermudah perencanaan itinerari, efisiensi rute, dan estimasi anggaran liburan.
+              </p>
+              <div className="flex items-center gap-3 text-slate-400 text-xs mt-2">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
+                  ⚡ Powered by AI Engine
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
+                  🇮🇩 Indonesia
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4">
+                Navigasi Utama
+              </h4>
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+                <li><a href="#" className="hover:text-purple-400 transition-colors">Beranda</a></li>
+                <li><a href="#planner-form" className="hover:text-purple-400 transition-colors">Buat Itinerari</a></li>
+                <li><a href="#destinasi" className="hover:text-purple-400 transition-colors">Destinasi Populer</a></li>
+                <li><a href="#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a></li>
+              </ul>
+            </div>
+
+            {/* Popular Destinations Links */}
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4">
+                Destinasi Favorit
+              </h4>
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+                <li><a href="#planner-form" onClick={() => handleSelectPreset("Tokyo, Kyoto, Osaka")} className="hover:text-purple-400 transition-colors">Tokyo & Kyoto</a></li>
+                <li><a href="#planner-form" onClick={() => handleSelectPreset("Bali, Nusa Penida, Ubud")} className="hover:text-purple-400 transition-colors">Bali & Lombok</a></li>
+                <li><a href="#planner-form" onClick={() => handleSelectPreset("Zurich, Interlaken, Zermatt")} className="hover:text-purple-400 transition-colors">Swiss Alps</a></li>
+                <li><a href="#planner-form" onClick={() => handleSelectPreset("Paris, Rome, Florence")} className="hover:text-purple-400 transition-colors">Paris & Roma</a></li>
+              </ul>
+            </div>
+
+            {/* Legal & Social Links */}
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4">
+                Informasi & Bantuan
+              </h4>
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+                <li><a href="#" className="hover:text-purple-400 transition-colors">Tentang Kami</a></li>
+                <li><a href="#" className="hover:text-purple-400 transition-colors">Kebijakan Privasi</a></li>
+                <li><a href="#" className="hover:text-purple-400 transition-colors">Syarat & Ketentuan</a></li>
+                <li><a href="#" className="hover:text-purple-400 transition-colors">Pusat Bantuan (FAQ)</a></li>
+              </ul>
+            </div>
+
+          </div>
+
+          {/* Bottom Bar with Copyright */}
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>© 2026 KelanaAI. Seluruh hak cipta dilindungi undang-undang.</p>
+            <div className="flex items-center gap-6">
+              <a href="#" className="hover:text-slate-300 transition-colors">Syarat Penggunaan</a>
+              <a href="#" className="hover:text-slate-300 transition-colors">Privasi</a>
+              <a href="#" className="hover:text-slate-300 transition-colors">Dokumentasi</a>
+            </div>
+          </div>
+        </div>
       </footer>
-    </main>
+
+    </div>
   );
 }

@@ -30,8 +30,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${inter.variable} ${jakarta.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), var(--font-jakarta), sans-serif" }}>
+    <html lang="id" className={`${inter.variable} ${jakarta.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), var(--font-jakarta), sans-serif" }} suppressHydrationWarning>
         {children}
       </body>
     </html>
