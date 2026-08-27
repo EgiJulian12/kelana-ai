@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import MarkdownItinerary from "./components/MarkdownItinerary";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { generateTrip } from "@/services/tripService";
+import MarkdownItinerary from "../components/MarkdownItinerary";
 
 interface TripResult {
   id: number;
@@ -133,6 +136,7 @@ const POPULAR_DESTINATIONS = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     destinations: "",
     days: 3,
@@ -168,34 +172,21 @@ export default function Home() {
         throw new Error("Budget dan durasi hari harus bernilai lebih dari 0.");
       }
 
-      const destinations = formData.destinations
-        .split(",")
-        .map((d) => d.trim())
-        .filter(Boolean);
-
-      if (destinations.length === 0) {
+      if (!formData.destinations.trim()) {
         throw new Error("Mohon masukkan minimal satu nama destinasi.");
       }
 
-      const res = await fetch("http://localhost:8000/api/v1/trips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          destinations,
-          days: Number(formData.days),
-          budget: Number(formData.budget),
-        }),
+      // Use the service layer to generate trip
+      const data = await generateTrip({
+        destination: formData.destinations,
+        budget: Number(formData.budget),
+        days: Number(formData.days),
+        travel_style: formData.travel_style,
       });
 
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.detail || "Gagal menyusun itinerari AI. Pastikan backend aktif.");
-      }
-
-      const data = await res.json();
       setResult(data);
 
+      // Scroll to result section
       setTimeout(() => {
         const resultEl = document.getElementById("itinerary-result");
         if (resultEl) {
@@ -243,6 +234,7 @@ export default function Home() {
 
           {/* Nav links (Desktop) */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            <Link href="/trips" className="hover:text-purple-400 transition-colors">My Trips</Link>
             <a href="#destinasi" className="hover:text-purple-400 transition-colors">Destinasi</a>
             <a href="#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a>
             <a href="#planner-form" className="hover:text-purple-400 transition-colors">Rencanakan Trip</a>
@@ -649,6 +641,36 @@ export default function Home() {
               {/* Markdown Content Output */}
               <div className="p-6 sm:p-8 rounded-2xl bg-[#090b24]/80 border border-white/10 itinerary-prose">
                 <MarkdownItinerary content={result.ai_recommendation} />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link 
+                  href="/trips" 
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  📋 View My Trips
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResult(null);
+                    setFormData({
+                      destinations: "",
+                      days: 3,
+                      budget: 1000,
+                      month: "January",
+                      travel_style: "cultural",
+                    });
+                    const formElement = document.getElementById("planner-form");
+                    if (formElement) {
+                      formElement.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/40 transition-all"
+                >
+                  ✨ Create Another Trip
+                </button>
               </div>
             </div>
           </div>

@@ -6,6 +6,9 @@ from services.trip_services import calculate_daily_budget, get_trip_category
 from models.trip import Trip
 from database import SessionLocal, init_db
 from services.bedrock_service import get_ai_recommendation
+from dotenv import load_dotenv
+
+import os
 
 init_db()
 
