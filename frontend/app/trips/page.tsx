@@ -7,12 +7,15 @@ import Link from 'next/link';
 
 type SortOption = 'latest' | 'oldest' | 'budget-desc' | 'budget-asc';
 
+const ITEMS_PER_PAGE = 9; // 3x3 grid
+
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('latest');
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -64,6 +67,22 @@ export default function TripsPage() {
 
     return result;
   }, [trips, searchQuery, sortBy]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAndSortedTrips.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentTrips = filteredAndSortedTrips.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
@@ -129,12 +148,21 @@ export default function TripsPage() {
 
   return (
     <div className="trips-container">
-      <div className="trips-header">
-        <h1 className="trips-title">My Trips</h1>
-        <Link href="/" className="btn-primary">
-          Create New Trip
-        </Link>
+      {/* Animated Background */}
+      <div className="trips-bg-layer">
+        <div className="bg-grid"></div>
+        <div className="bg-orb-1"></div>
+        <div className="bg-orb-2"></div>
+        <div className="bg-orb-3"></div>
       </div>
+
+      <div className="trips-content">
+        <div className="trips-header">
+          <h1 className="trips-title">My Trips</h1>
+          <Link href="/" className="btn-primary">
+            Create New Trip
+          </Link>
+        </div>
 
       {/* Search and Sort Controls */}
       <div className="trips-controls">
@@ -203,12 +231,76 @@ export default function TripsPage() {
           </button>
         </div>
       ) : (
-        <div className="trips-grid">
-          {filteredAndSortedTrips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
-          ))}
-        </div>
+        <>
+          <div className="trips-grid">
+            {currentTrips.map((trip) => (
+              <TripCard key={trip.id} trip={trip} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination-container">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+                aria-label="Previous page"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                  // Show first, last, current, and pages around current
+                  const showPage = 
+                    page === 1 || 
+                    page === totalPages || 
+                    (page >= currentPage - 1 && page <= currentPage + 1);
+                  
+                  const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
+                  const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
+
+                  if (showEllipsisBefore || showEllipsisAfter) {
+                    return <span key={page} className="pagination-ellipsis">...</span>;
+                  }
+
+                  if (!showPage) return null;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`pagination-number ${page === currentPage ? 'active' : ''}`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+                aria-label="Next page"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {/* Page info */}
+          <div className="pagination-info">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredAndSortedTrips.length)} of {filteredAndSortedTrips.length} trips
+          </div>
+        </>
       )}
+      </div>
     </div>
   );
 }
