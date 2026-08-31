@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getTrip, Trip } from '@/services/tripService';
 import MarkdownItinerary from '@/components/MarkdownItinerary';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 
 export default function TripDetailPage() {
@@ -14,6 +16,13 @@ export default function TripDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check authentication
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     const fetchTrip = async () => {
       try {
         setLoading(true);
@@ -23,6 +32,14 @@ export default function TripDetailPage() {
         setError(null);
       } catch (err: any) {
         console.error('Failed to fetch trip:', err);
+        
+        // Handle 401 Unauthorized
+        if (err.message?.includes('401')) {
+          localStorage.removeItem('auth_token');
+          router.push('/login');
+          return;
+        }
+        
         if (err.message === 'Trip not found') {
           setError('Trip not found');
         } else {
@@ -36,7 +53,7 @@ export default function TripDetailPage() {
     if (params.id) {
       fetchTrip();
     }
-  }, [params.id]);
+  }, [params.id, router]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -60,45 +77,55 @@ export default function TripDetailPage() {
 
   if (loading) {
     return (
-      <div className="trip-detail-container">
-        <div className="loading-container">
-          <div className="loader"></div>
-          <p>Loading trip details...</p>
+      <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+        <Navbar />
+        <div className="trip-detail-container">
+          <div className="loading-container">
+            <div className="loader"></div>
+            <p>Loading trip details...</p>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !trip) {
     return (
-      <div className="trip-detail-container">
-        <div className="error-container">
-          <h2 className="error-title">⚠️ {error || 'Trip not found'}</h2>
-          <p className="error-message">
-            {error === 'Trip not found' 
-              ? 'The trip you are looking for does not exist or has been deleted.'
-              : 'Unable to load trip details. Please try again.'}
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <Link href="/trips" className="btn-primary">
-              Back to Trips
-            </Link>
-            {error !== 'Trip not found' && (
-              <button 
-                onClick={() => window.location.reload()} 
-                className="btn-secondary"
-              >
-                Retry
-              </button>
-            )}
+      <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+        <Navbar />
+        <div className="trip-detail-container">
+          <div className="error-container">
+            <h2 className="error-title">⚠️ {error || 'Trip not found'}</h2>
+            <p className="error-message">
+              {error === 'Trip not found' 
+                ? 'The trip you are looking for does not exist or has been deleted.'
+                : 'Unable to load trip details. Please try again.'}
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <Link href="/trips" className="btn-primary">
+                Back to Trips
+              </Link>
+              {error !== 'Trip not found' && (
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="btn-secondary"
+                >
+                  Retry
+                </button>
+              )}
+            </div>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="trip-detail-container">
+    <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+      <Navbar />
+      <div className="trip-detail-container">
       {/* Header Section */}
       <div className="trip-detail-header">
         <div className="trip-detail-header-content">
@@ -158,6 +185,8 @@ export default function TripDetailPage() {
           Create New Trip
         </Link>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }

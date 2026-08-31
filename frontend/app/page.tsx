@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { generateTrip } from "@/services/tripService";
-import MarkdownItinerary from "../components/MarkdownItinerary";
+import MarkdownItinerary from "@/components/MarkdownItinerary";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface TripResult {
   id: number;
@@ -148,6 +150,15 @@ export default function Home() {
   const [result, setResult] = useState<TripResult | null>(null);
   const [error, setError] = useState("");
 
+  // Check authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      // User not logged in, redirect to login
+      router.push('/login');
+    }
+  }, [router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -168,6 +179,14 @@ export default function Home() {
     setResult(null);
 
     try {
+      // Check if user is logged in
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        setError("Please login first to create trips.");
+        router.push('/login');
+        return;
+      }
+
       if (formData.budget <= 0 || formData.days < 1) {
         throw new Error("Budget dan durasi hari harus bernilai lebih dari 0.");
       }
@@ -194,6 +213,14 @@ export default function Home() {
         }
       }, 100);
     } catch (err: any) {
+      // Handle 401 Unauthorized
+      if (err.message?.includes('401') || err.message?.includes('Unauthorized')) {
+        localStorage.removeItem('auth_token');
+        setError("Your session has expired. Please login again.");
+        router.push('/login');
+        return;
+      }
+      
       setError(err.message || "Terjadi kesalahan saat memproses permintaan.");
     } finally {
       setLoading(false);
@@ -211,47 +238,8 @@ export default function Home() {
         <div className="bg-orb-3 absolute w-[45vw] h-[45vw] top-[40%] left-[25%] rounded-full blur-[130px] opacity-25" />
       </div>
 
-      {/* ── HEADER / NAVBAR ────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 navbar-glass border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-[#090b29] rounded-[15px] flex items-center justify-center text-purple-400 group-hover:text-cyan-300 transition-colors">
-                <PlaneIcon />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                Kelana<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">AI</span>
-              </span>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                Smart Travel Assistant
-              </span>
-            </div>
-          </a>
-
-          {/* Nav links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-            <Link href="/trips" className="hover:text-purple-400 transition-colors">My Trips</Link>
-            <a href="#destinasi" className="hover:text-purple-400 transition-colors">Destinasi</a>
-            <a href="#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a>
-            <a href="#planner-form" className="hover:text-purple-400 transition-colors">Rencanakan Trip</a>
-          </nav>
-
-          {/* CTA Button */}
-          <div className="flex items-center gap-3">
-            <a
-              href="#planner-form"
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
-            >
-              <SparklesIcon />
-              <span>Mulai Rencana</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      {/* ── NAVBAR ────────────────────────────────────────── */}
+      <Navbar />
 
       {/* ── HERO SECTION WITH DESTINATION IMAGE ────────────────────── */}
       <section className="relative z-10 pt-10 sm:pt-14 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">

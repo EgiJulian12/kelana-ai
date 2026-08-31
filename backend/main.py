@@ -1,111 +1,160 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List
-from services.trip_services import calculate_daily_budget, get_trip_category
-from models.trip import Trip
-from database import SessionLocal, init_db
-from services.bedrock_service import get_ai_recommendation
-from dotenv import load_dotenv
-
+from pydantic import BaseModel, field_validator
+from typing import Optional
 import os
+from dotenv import load_dotenv
+from services.trip_services import (
+    calculate_daily_budget,
+    get_trip_category,
+    get_transportation_recomendation
+)
+from services.bedrock_service import get_ai_recommendation
+from services.auth_service import register_user, login_user, get_current_user
+from models.trip import Trip
+from models.user import User
+from database import SessionLocal, init_db
 
-init_db()
+load_dotenv()
 
-app = FastAPI(title="KelanaAI API")
 
-# Enable CORS
+# ── Request schemas ───────────────────────────────────────────────────────────
+
+class TripRequest(BaseModel):
+    destination:  str
+    days:         int
+    budget:       float
+    travel_style: str
+
+class TripUpdateRequest(BaseModel):
+    budget:       Optional[float] = None
+    days:         Optional[int]   = None
+    travel_style: Optional[str]   = None
+
+class RegisterRequest(BaseModel):
+    name:     str
+    email:    str
+    password: str
+
+    @field_validator("email")
+    @classmethod
+    def email_must_contain_at(cls, v: str) -> str:
+        if "@" not in v or "." not in v.split("@")[-1]:
+            raise ValueError("Invalid email address")
+        return v.lower().strip()
+
+class LoginRequest(BaseModel):
+    email:    str
+    password: str
+
+    @field_validator("email")
+    @classmethod
+    def email_must_contain_at(cls, v: str) -> str:
+        if "@" not in v or "." not in v.split("@")[-1]:
+            raise ValueError("Invalid email address")
+        return v.lower().strip()
+
+
+# ── App setup ─────────────────────────────────────────────────────────────────
+
+app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:3000")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-class TripRequest(BaseModel):
-    destinations: List[str]
-    days: int
-    budget: float
-    month: str
-    travel_style: str = "cultural"
+init_db()
 
 
-class TripUpdate(BaseModel):
-    budget: float
+# ── Public endpoints ──────────────────────────────────────────────────────────
 
+@app.get("/health")
+def health():
+    return {"status": "OK"}
 
-# 1. Root
 @app.get("/")
 def home():
     return {"message": "Welcome to KelanaAI"}
 
-
-# 2. Health Check
-@app.get("/health")
-def health_check():
-    return {"status": "OK"}
-
-
-# 3. Static recommendation endpoints
-@app.get("/api/v1/recommendations")
-def get_recommendations():
-    return ["Tokyo Tower", "Mount Fuji", "Shibuya"]
-
-
-@app.get("/api/v1/transportations")
-def get_transportations():
-    return ["Bus", "Train", "Flight"]
-
-
-# 4. List all trips
-@app.get("/api/v1/trips")
-def list_trips():
+@app.post("/api/v1/auth/register", status_code=201)
+def register(request: RegisterRequest):
     db = SessionLocal()
     try:
-        trips = db.query(Trip).all()
-        return trips
+        user = register_user(
+            db       = db,
+            name     = request.name,
+            email    = request.email,
+            password = request.password,
+        )
+        return {
+            "id":         user.id,
+            "name":       user.name,
+            "email":      user.email,
+            "created_at": user.created_at,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    finally:
+        db.close()
+
+@app.post("/api/v1/auth/login")
+def login(request: LoginRequest):
+    db = SessionLocal()
+    try:
+        return login_user(db=db, email=request.email, password=request.password)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
     finally:
         db.close()
 
 
-# 5. Get trip by ID
-@app.get("/api/v1/trips/{trip_id}")
-def get_trip(trip_id: int):
+@app.get("/api/v1/auth/me")
+def me(current_user: User = Depends(get_current_user)):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(Trip.id == trip_id).first()
-        if trip is None:
-            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-        return trip
+        trip_count = db.query(Trip).filter(Trip.user_id == current_user.id).count()
     finally:
         db.close()
+    return {
+        "id":          current_user.id,
+        "name":        current_user.name,
+        "email":       current_user.email,
+        "created_at":  current_user.created_at,
+        "total_trips": trip_count,
+    }
 
 
-# 6. Create trip with AI recommendation
+# ── Protected trip endpoints ──────────────────────────────────────────────────
+
 @app.post("/api/v1/trips")
-def create_trip(request: TripRequest):
+def create_trip(
+    request: TripRequest,
+    current_user: User = Depends(get_current_user),
+):
     daily_budget = calculate_daily_budget(request.budget, request.days)
     category     = get_trip_category(request.budget)
-
     ai_recommendation = get_ai_recommendation(
-        destination=", ".join(request.destinations),
-        days=request.days,
-        budget=request.budget,
-        travel_style=request.travel_style,
+        destination  = request.destination,
+        days         = request.days,
+        budget       = request.budget,
+        travel_style = request.travel_style,
     )
-
+    trip = Trip(
+        user_id           = current_user.id,
+        destination       = request.destination,
+        days              = request.days,
+        budget            = request.budget,
+        travel_style      = request.travel_style,
+        category          = category,
+        daily_budget      = daily_budget,
+        ai_recommendation = ai_recommendation,
+    )
     db = SessionLocal()
     try:
-        trip = Trip(
-            destination       = ", ".join(request.destinations),
-            days              = request.days,
-            budget            = request.budget,
-            category          = category,
-            daily_budget      = daily_budget,
-            ai_recommendation = ai_recommendation,
-        )
         db.add(trip)
         db.commit()
         db.refresh(trip)
@@ -113,43 +162,52 @@ def create_trip(request: TripRequest):
     finally:
         db.close()
 
-
-# 7. Generate / regenerate AI recommendation for existing trip
-@app.post("/api/v1/trips/{trip_id}/generate")
-def generate_trip_recommendation(trip_id: int):
+@app.get("/api/v1/trips")
+def list_trips(current_user: User = Depends(get_current_user)):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(Trip.id == trip_id).first()
-        if trip is None:
-            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-
-        ai_recommendation = get_ai_recommendation(
-            destination=trip.destination,
-            days=trip.days,
-            budget=trip.budget,
-            travel_style="cultural",
-        )
-
-        trip.ai_recommendation = ai_recommendation
-        db.commit()
-        db.refresh(trip)
-        return trip
+        return db.query(Trip).filter(Trip.user_id == current_user.id).all()
     finally:
         db.close()
 
+@app.get("/api/v1/trips/{trip_id}")
+def get_trip(trip_id: int, current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    try:
+        trip = db.query(Trip).filter(
+            Trip.id == trip_id,
+            Trip.user_id == current_user.id,
+        ).first()
+    finally:
+        db.close()
+    if trip is None:
+        raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
+    return trip
 
-# 8. Update trip budget
 @app.put("/api/v1/trips/{trip_id}")
-def update_trip_budget(trip_id: int, request: TripUpdate):
+def update_trip(
+    trip_id: int,
+    request: TripUpdateRequest,
+    current_user: User = Depends(get_current_user),
+):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        trip = db.query(Trip).filter(
+            Trip.id == trip_id,
+            Trip.user_id == current_user.id,
+        ).first()
         if trip is None:
-            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+            raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
 
-        trip.budget       = request.budget
-        trip.daily_budget = calculate_daily_budget(request.budget, trip.days)
-        trip.category     = get_trip_category(request.budget)
+        if request.budget is not None:
+            trip.budget = request.budget
+        if request.days is not None:
+            trip.days = request.days
+        if request.travel_style is not None:
+            trip.travel_style = request.travel_style
+
+        trip.daily_budget = calculate_daily_budget(trip.budget, trip.days)
+        trip.category     = get_trip_category(trip.budget)
 
         db.commit()
         db.refresh(trip)
@@ -157,18 +215,18 @@ def update_trip_budget(trip_id: int, request: TripUpdate):
     finally:
         db.close()
 
-
-# 9. Delete trip
 @app.delete("/api/v1/trips/{trip_id}")
-def delete_trip(trip_id: int):
+def delete_trip(trip_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        trip = db.query(Trip).filter(
+            Trip.id == trip_id,
+            Trip.user_id == current_user.id,
+        ).first()
         if trip is None:
-            raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
-
+            raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
         db.delete(trip)
         db.commit()
-        return {"message": f"Trip with id {trip_id} successfully deleted"}
+        return {"message": f"Trip {trip_id} deleted successfully"}
     finally:
         db.close()

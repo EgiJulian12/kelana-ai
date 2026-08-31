@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+// Use Next.js API routes as proxy to avoid CORS issues
+const API_URL = '/api';
 
 export interface Trip {
   id: number;
@@ -19,16 +20,19 @@ export interface CreateTripRequest {
   travel_style: string;
 }
 
-export interface CreateTripResponse {
-  id: number;
-  destination: string;
-  budget: number;
-  days: number;
-  travel_style: string;
-  category: string;
-  daily_budget: number;
-  ai_recommendation: string;
-  created_at: string;
+export interface CreateTripResponse extends Trip {}
+
+function getAuthHeaders(): HeadersInit {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
 }
 
 /**
@@ -36,16 +40,63 @@ export interface CreateTripResponse {
  */
 export async function getTrips(): Promise<Trip[]> {
   try {
-    const response = await fetch(`${API_URL}/trips`);
+    const url = `${API_URL}/trips`;
+    console.log('🎫 Fetching trips from:', url);
+    console.log('🔑 Auth headers:', getAuthHeaders());
+    
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+      cache: 'no-store', // Disable caching for debugging
+    });
+    
+    console.log('📡 Response received:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      url: response.url,
+      type: response.type
+    });
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch trips: ${response.statusText}`);
+      const contentType = response.headers.get('content-type');
+      console.log('Content-Type:', contentType);
+      
+      let errorText = '';
+      try {
+        if (contentType?.includes('application/json')) {
+          const errorJson = await response.json();
+          errorText = JSON.stringify(errorJson);
+        } else {
+          errorText = await response.text();
+        }
+      } catch (e) {
+        errorText = 'Could not parse error response';
+      }
+      
+      console.error('❌ Failed to fetch trips:', { 
+        status: response.status, 
+        statusText: response.statusText,
+        errorText,
+        url: response.url
+      });
+      
+      // Handle 401 specially
+      if (response.status === 401) {
+        throw new Error('401: Unauthorized - Please login again');
+      }
+      
+      throw new Error(`Failed to fetch trips: ${response.statusText} - ${errorText}`);
     }
     
     const data = await response.json();
+    console.log('✅ Trips fetched successfully:', Array.isArray(data) ? `${data.length} trips` : data);
     return data;
-  } catch (error) {
-    console.error('Error fetching trips:', error);
+  } catch (error: any) {
+    console.error('💥 Error fetching trips:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
     throw error;
   }
 }
@@ -55,19 +106,30 @@ export async function getTrips(): Promise<Trip[]> {
  */
 export async function getTrip(id: string | number): Promise<Trip> {
   try {
-    const response = await fetch(`${API_URL}/trips/${id}`);
+    const url = `${API_URL}/trips/${id}`;
+    console.log('🎫 Fetching trip:', url);
+    
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+    
+    console.log('📡 Response status:', response.status);
     
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error('Trip not found');
       }
+      if (response.status === 401) {
+        throw new Error('401: Unauthorized - Please login again');
+      }
       throw new Error(`Failed to fetch trip: ${response.statusText}`);
     }
     
     const data = await response.json();
+    console.log('✅ Trip fetched successfully');
     return data;
-  } catch (error) {
-    console.error(`Error fetching trip ${id}:`, error);
+  } catch (error: any) {
+    console.error(`💥 Error fetching trip ${id}:`, error);
     throw error;
   }
 }
@@ -77,22 +139,16 @@ export async function getTrip(id: string | number): Promise<Trip> {
  */
 export async function generateTrip(request: CreateTripRequest): Promise<CreateTripResponse> {
   try {
-    // Convert destination string to array of destinations for backend
-    const destinations = request.destination.split(',').map(d => d.trim()).filter(Boolean);
-    
     const payload = {
-      destinations,
+      destination: request.destination,
       days: request.days,
       budget: request.budget,
-      month: "January", // Default month, bisa diubah kalau perlu
       travel_style: request.travel_style,
     };
     
     const response = await fetch(`${API_URL}/trips`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload),
     });
     

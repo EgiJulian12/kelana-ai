@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { getTrips, Trip } from '@/services/tripService';
 import TripCard from '@/components/TripCard';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 
 type SortOption = 'latest' | 'oldest' | 'budget-desc' | 'budget-asc';
@@ -10,6 +13,7 @@ type SortOption = 'latest' | 'oldest' | 'budget-desc' | 'budget-asc';
 const ITEMS_PER_PAGE = 9; // 3x3 grid
 
 export default function TripsPage() {
+  const router = useRouter();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,14 +22,29 @@ export default function TripsPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    // Check authentication
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     const fetchTrips = async () => {
       try {
         setLoading(true);
         const data = await getTrips();
         setTrips(data);
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to fetch trips:', err);
+        
+        // If 401, redirect to login
+        if (err.message?.includes('401')) {
+          localStorage.removeItem('auth_token');
+          router.push('/login');
+          return;
+        }
+        
         setError('Failed to load trips. Please try again later.');
       } finally {
         setLoading(false);
@@ -33,7 +52,7 @@ export default function TripsPage() {
     };
 
     fetchTrips();
-  }, []);
+  }, [router]);
 
   // Filter and sort trips
   const filteredAndSortedTrips = useMemo(() => {
@@ -86,68 +105,82 @@ export default function TripsPage() {
 
   if (loading) {
     return (
-      <div className="trips-container">
-        <div className="trips-header">
-          <h1 className="trips-title">My Trips</h1>
-          <Link href="/" className="btn-primary">
-            Create New Trip
-          </Link>
+      <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+        <Navbar />
+        <div className="trips-container">
+          <div className="trips-header">
+            <h1 className="trips-title">My Trips</h1>
+            <Link href="/" className="btn-primary">
+              Create New Trip
+            </Link>
+          </div>
+          <div className="loading-container">
+            <div className="loader"></div>
+            <p>Loading your trips...</p>
+          </div>
         </div>
-        <div className="loading-container">
-          <div className="loader"></div>
-          <p>Loading your trips...</p>
-        </div>
+        <Footer />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="trips-container">
-        <div className="trips-header">
-          <h1 className="trips-title">My Trips</h1>
-          <Link href="/" className="btn-primary">
-            Create New Trip
-          </Link>
+      <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+        <Navbar />
+        <div className="trips-container">
+          <div className="trips-header">
+            <h1 className="trips-title">My Trips</h1>
+            <Link href="/" className="btn-primary">
+              Create New Trip
+            </Link>
+          </div>
+          <div className="error-container">
+            <p className="error-message">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="btn-secondary"
+            >
+              Retry
+            </button>
+          </div>
         </div>
-        <div className="error-container">
-          <p className="error-message">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="btn-secondary"
-          >
-            Retry
-          </button>
-        </div>
+        <Footer />
       </div>
     );
   }
 
   if (trips.length === 0) {
     return (
-      <div className="trips-container">
-        <div className="trips-header">
-          <h1 className="trips-title">My Trips</h1>
-          <Link href="/" className="btn-primary">
-            Create New Trip
-          </Link>
+      <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+        <Navbar />
+        <div className="trips-container">
+          <div className="trips-header">
+            <h1 className="trips-title">My Trips</h1>
+            <Link href="/" className="btn-primary">
+              Create New Trip
+            </Link>
+          </div>
+          <div className="empty-state">
+            <div className="empty-state-icon">✈️</div>
+            <h2 className="empty-state-title">No trips yet</h2>
+            <p className="empty-state-description">
+              Start planning your next adventure by creating your first trip!
+            </p>
+            <Link href="/" className="btn-primary">
+              Create Your First Trip
+            </Link>
+          </div>
         </div>
-        <div className="empty-state">
-          <div className="empty-state-icon">✈️</div>
-          <h2 className="empty-state-title">No trips yet</h2>
-          <p className="empty-state-description">
-            Start planning your next adventure by creating your first trip!
-          </p>
-          <Link href="/" className="btn-primary">
-            Create Your First Trip
-          </Link>
-        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="trips-container">
+    <div className="min-h-screen bg-[#05061a] text-slate-100 flex flex-col">
+      <Navbar />
+      <div className="trips-container">
       {/* Animated Background */}
       <div className="trips-bg-layer">
         <div className="bg-grid"></div>
@@ -301,6 +334,8 @@ export default function TripsPage() {
         </>
       )}
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }
