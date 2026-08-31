@@ -174,15 +174,18 @@ def list_trips(current_user: User = Depends(get_current_user)):
 def get_trip(trip_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(
-            Trip.id == trip_id,
-            Trip.user_id == current_user.id,
-        ).first()
+        # First check if trip exists
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
+        if trip is None:
+            raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
+        
+        # Then check ownership
+        if trip.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="You don't have permission to access this trip")
+        
+        return trip
     finally:
         db.close()
-    if trip is None:
-        raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
-    return trip
 
 @app.put("/api/v1/trips/{trip_id}")
 def update_trip(
@@ -192,12 +195,14 @@ def update_trip(
 ):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(
-            Trip.id == trip_id,
-            Trip.user_id == current_user.id,
-        ).first()
+        # First check if trip exists
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
         if trip is None:
             raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
+        
+        # Then check ownership - Return 403 Forbidden if not owner
+        if trip.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="You don't have permission to update this trip")
 
         if request.budget is not None:
             trip.budget = request.budget
@@ -219,12 +224,15 @@ def update_trip(
 def delete_trip(trip_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
     try:
-        trip = db.query(Trip).filter(
-            Trip.id == trip_id,
-            Trip.user_id == current_user.id,
-        ).first()
+        # First check if trip exists
+        trip = db.query(Trip).filter(Trip.id == trip_id).first()
         if trip is None:
             raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found")
+        
+        # Then check ownership - Return 403 Forbidden if not owner
+        if trip.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="You don't have permission to delete this trip")
+        
         db.delete(trip)
         db.commit()
         return {"message": f"Trip {trip_id} deleted successfully"}
