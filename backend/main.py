@@ -11,6 +11,7 @@ from services.trip_services import (
 )
 from services.bedrock_service import get_ai_recommendation
 from services.auth_service import register_user, login_user, get_current_user
+from services.kb_service import ask_knowledge_base
 from models.trip import Trip
 from models.user import User
 from database import SessionLocal, init_db
@@ -53,6 +54,10 @@ class LoginRequest(BaseModel):
         if "@" not in v or "." not in v.split("@")[-1]:
             raise ValueError("Invalid email address")
         return v.lower().strip()
+
+class QuestionRequest(BaseModel):
+    """Request schema for RAG assistant endpoint"""
+    question: str
 
 
 # ── App setup ─────────────────────────────────────────────────────────────────
@@ -125,6 +130,22 @@ def me(current_user: User = Depends(get_current_user)):
         "email":       current_user.email,
         "created_at":  current_user.created_at,
         "total_trips": trip_count,
+    }
+
+@app.post("/api/v1/assistant")
+def ask_assistant(request: QuestionRequest):
+    """
+    RAG-enabled travel assistant endpoint
+    Retrieves from Knowledge Base and generates grounded answers
+    """
+    # 1. Send question to Knowledge Base (retrieval + generation)
+    result = ask_knowledge_base(request.question)
+    
+    # 2. Return grounded answer with sources to frontend
+    return {
+        "question": request.question,
+        "answer": result["answer"],
+        "sources": result["sources"]
     }
 
 

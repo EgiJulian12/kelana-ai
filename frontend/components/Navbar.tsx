@@ -41,6 +41,12 @@ const MapIcon = () => (
   </svg>
 );
 
+const MessageIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -84,12 +90,20 @@ export default function Navbar() {
         {/* Nav links (Desktop) */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
           {isLoggedIn && (
-            <Link 
-              href="/trips" 
-              className={`hover:text-purple-400 transition-colors ${pathname === '/trips' ? 'text-purple-400' : ''}`}
-            >
-              My Trips
-            </Link>
+            <>
+              <Link 
+                href="/trips" 
+                className={`hover:text-purple-400 transition-colors ${pathname === '/trips' ? 'text-purple-400' : ''}`}
+              >
+                My Trips
+              </Link>
+              <Link 
+                href="/assistant" 
+                className={`hover:text-purple-400 transition-colors ${pathname === '/assistant' ? 'text-purple-400' : ''}`}
+              >
+                Assistant
+              </Link>
+            </>
           )}
           <a href="/#destinasi" className="hover:text-purple-400 transition-colors">Destinasi</a>
           <a href="/#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a>
@@ -145,6 +159,15 @@ export default function Navbar() {
                       >
                         <MapIcon />
                         <span className="text-sm font-semibold">My Trips</span>
+                      </Link>
+
+                      <Link
+                        href="/assistant"
+                        onClick={() => setShowMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        <MessageIcon />
+                        <span className="text-sm font-semibold">Travel Assistant</span>
                       </Link>
 
                       <div className="border-t border-white/10 my-2" />
