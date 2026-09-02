@@ -101,105 +101,140 @@ export default function AssistantPage() {
 
         {/* Response Section */}
         {response && (
-          <div className="bg-gradient-to-br from-teal-900/20 to-emerald-900/20 rounded-lg p-6 border border-teal-500/30 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold mb-4 text-teal-300 flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              AI ANSWER
-            </h3>
-            
-            {/* Formatted Answer */}
-            <div className="text-slate-100 mb-4 leading-relaxed space-y-3">
-              {response.answer.split('\n').map((paragraph, idx) => {
-                // Skip empty lines
-                if (!paragraph.trim()) return null;
-                
-                // Check if it's a numbered list item (1. 2. etc)
-                const numberedMatch = paragraph.match(/^(\d+)\.\s*\*\*(.*?)\*\*(.*)$/);
-                if (numberedMatch) {
-                  return (
-                    <div key={idx} className="flex gap-3 items-start">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-600/30 text-teal-300 flex items-center justify-center text-sm font-semibold">
-                        {numberedMatch[1]}
-                      </span>
-                      <div>
-                        <span className="font-semibold text-teal-200">{numberedMatch[2]}</span>
-                        <span className="text-slate-300">{numberedMatch[3]}</span>
+          <div className="space-y-4">
+            {/* AI Answer Card */}
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm">
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-700/50">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">KelanaAI Assistant</h3>
+                  <p className="text-xs text-slate-400">Powered by Knowledge Base</p>
+                </div>
+              </div>
+
+              {/* Answer Content */}
+              <div className="prose prose-invert prose-slate max-w-none">
+                <div className="text-slate-200 leading-relaxed space-y-4">
+                  {response.answer.split('\n\n').map((section, sectionIdx) => {
+                    const lines = section.split('\n');
+                    
+                    return (
+                      <div key={sectionIdx} className="space-y-2">
+                        {lines.map((line, lineIdx) => {
+                          if (!line.trim()) return null;
+                          
+                          // Numbered list with bold title (1. **Title:** description)
+                          const numberedBoldMatch = line.match(/^(\d+)\.\s*\*\*(.*?)\*\*:?\s*(.*)$/);
+                          if (numberedBoldMatch) {
+                            return (
+                              <div key={lineIdx} className="flex gap-3 py-2">
+                                <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm font-bold border border-teal-500/30">
+                                  {numberedBoldMatch[1]}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-semibold text-white mb-1">{numberedBoldMatch[2]}</div>
+                                  {numberedBoldMatch[3] && (
+                                    <div className="text-slate-300 text-sm">{numberedBoldMatch[3]}</div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          }
+                          
+                          // Bullet with bold (- **Title:** description)
+                          const bulletBoldMatch = line.match(/^[-•]\s*\*\*(.*?)\*\*:?\s*(.*)$/);
+                          if (bulletBoldMatch) {
+                            return (
+                              <div key={lineIdx} className="flex gap-3 py-1 pl-4">
+                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-teal-400 mt-2"></div>
+                                <div className="flex-1">
+                                  <span className="font-medium text-white">{bulletBoldMatch[1]}</span>
+                                  {bulletBoldMatch[2] && (
+                                    <span className="text-slate-300">: {bulletBoldMatch[2]}</span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          }
+                          
+                          // Simple bullet point
+                          const bulletMatch = line.match(/^[-•✓]\s*(.*)$/);
+                          if (bulletMatch) {
+                            return (
+                              <div key={lineIdx} className="flex gap-3 py-1 pl-4">
+                                <span className="text-teal-400 text-lg leading-none">•</span>
+                                <span className="text-slate-300 flex-1">{bulletMatch[1]}</span>
+                              </div>
+                            );
+                          }
+                          
+                          // Heading (### or **)
+                          const headingMatch = line.match(/^#{1,3}\s+(.*)$|^\*\*(.*?)\*\*$/);
+                          if (headingMatch) {
+                            const title = headingMatch[1] || headingMatch[2];
+                            return (
+                              <h4 key={lineIdx} className="font-bold text-white text-base mt-4 mb-2 flex items-center gap-2">
+                                <div className="w-1 h-5 bg-gradient-to-b from-teal-400 to-emerald-400 rounded-full"></div>
+                                {title}
+                              </h4>
+                            );
+                          }
+                          
+                          // Regular paragraph with inline formatting
+                          return (
+                            <p key={lineIdx} className="text-slate-300 leading-relaxed">
+                              {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, i) => {
+                                const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
+                                const italicMatch = part.match(/^\*(.*?)\*$/);
+                                
+                                if (boldMatch) {
+                                  return <strong key={i} className="font-semibold text-white">{boldMatch[1]}</strong>;
+                                }
+                                if (italicMatch) {
+                                  return <em key={i} className="italic text-slate-400">{italicMatch[1]}</em>;
+                                }
+                                return <span key={i}>{part}</span>;
+                              })}
+                            </p>
+                          );
+                        })}
                       </div>
-                    </div>
-                  );
-                }
-                
-                // Check if it's a bullet point with bold (- **Title:** text)
-                const bulletBoldMatch = paragraph.match(/^[-•]\s*\*\*(.*?)\*\*:?\s*(.*)$/);
-                if (bulletBoldMatch) {
-                  return (
-                    <div key={idx} className="flex gap-2 items-start ml-4">
-                      <span className="text-teal-400 mt-1">•</span>
-                      <div>
-                        <span className="font-semibold text-teal-200">{bulletBoldMatch[1]}</span>
-                        {bulletBoldMatch[2] && <span className="text-slate-300">: {bulletBoldMatch[2]}</span>}
-                      </div>
-                    </div>
-                  );
-                }
-                
-                // Check if it's a simple bullet point
-                const bulletMatch = paragraph.match(/^[-•]\s*(.*)$/);
-                if (bulletMatch) {
-                  return (
-                    <div key={idx} className="flex gap-2 items-start ml-4">
-                      <span className="text-teal-400 mt-1">•</span>
-                      <span className="text-slate-300">{bulletMatch[1]}</span>
-                    </div>
-                  );
-                }
-                
-                // Check if it's a heading (starts with ** and ends with **)
-                const headingMatch = paragraph.match(/^\*\*(.*?)\*\*$/);
-                if (headingMatch) {
-                  return (
-                    <h4 key={idx} className="font-bold text-teal-200 text-lg mt-4 mb-2">
-                      {headingMatch[1]}
-                    </h4>
-                  );
-                }
-                
-                // Regular paragraph - handle inline bold
-                const parts = paragraph.split(/(\*\*.*?\*\*)/g);
-                return (
-                  <p key={idx} className="text-slate-300">
-                    {parts.map((part, i) => {
-                      const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
-                      if (boldMatch) {
-                        return <strong key={i} className="font-semibold text-teal-200">{boldMatch[1]}</strong>;
-                      }
-                      return <span key={i}>{part}</span>;
-                    })}
-                  </p>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
+            {/* Sources Card */}
             {response.sources && response.sources.length > 0 && (
-              <div className="border-t border-slate-700 pt-4 mt-4">
-                <h4 className="text-sm font-semibold mb-3 text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-slate-800/30 rounded-2xl p-5 border border-slate-700/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg className="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  SOURCE DOCUMENTS
-                </h4>
+                  <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    Information Sources
+                  </h4>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {response.sources.map((source, idx) => (
                     <div
                       key={idx}
-                      className="inline-flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-lg text-sm text-slate-300 border border-slate-700/50"
+                      className="group px-3 py-2 bg-slate-900/50 hover:bg-slate-900/80 rounded-lg border border-slate-700/50 hover:border-teal-500/50 transition-all"
                     >
-                      <svg className="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span className="font-medium">{source}</span>
+                      <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm text-slate-300 group-hover:text-white transition-colors font-medium">
+                          {source}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
