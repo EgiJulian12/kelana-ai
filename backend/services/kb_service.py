@@ -1,121 +1,101 @@
-"""
-Knowledge Base Service for RAG (Retrieval-Augmented Generation)
-Uses Amazon Bedrock Knowledge Base to retrieve and generate grounded answers
-"""
-import boto3
 import os
-from typing import Dict, Any
 
-# Initialize Bedrock Agent Runtime client
-client = boto3.client(
-    "bedrock-agent-runtime",
-    region_name=os.getenv("AWS_REGION", "us-east-1")
-)
+import boto3
+from dotenv import load_dotenv
 
-# Knowledge Base ID from environment variable
-KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "")
-MODEL_ARN = os.getenv("KNOWLEDGE_BASE_MODEL_ARN", "")
+load_dotenv()
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+AWS_REGION = os.getenv("AWS_REGION", "ap-southeast-2")
+KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID")
 
 
-def ask_knowledge_base(question: str) -> Dict[str, Any]:
+def get_bedrock_agent_runtime_client():
     """
-    Query the Knowledge Base with RAG
-    
+    Build and return a boto3 Bedrock Agent Runtime client.
+
+    Bedrock Agent Runtime uses standard AWS SigV4 credentials.
+    """
+    return boto3.client(
+        service_name="bedrock-agent-runtime",
+        region_name=AWS_REGION,
+    )
+
+
+def retrieve_and_generate(query: str) -> dict:
+    """
+    Retrieve relevant content from the Bedrock Knowledge Base.
+
+    Managed knowledge bases support Retrieve, not RetrieveAndGenerate.
+
     Args:
-        question: User's travel-related question
-        
+        query: The user's question.
+
     Returns:
-        Dict containing answer and source references
+        The retrieved text snippets and their source information.
+
+    Raises:
+        ValueError: If required environment variables are missing.
+        Exception:  Propagated from boto3 / Bedrock on API errors.
     """
-    if not KNOWLEDGE_BASE_ID:
-        return {
-            "answer": "Knowledge Base is not configured. Please set KNOWLEDGE_BASE_ID in .env file.",
-            "sources": []
-        }
-    
-    try:
-        # Step 1: Retrieve relevant documents from Knowledge Base
-        retrieve_response = client.retrieve(
-            knowledgeBaseId=KNOWLEDGE_BASE_ID,
-            retrievalQuery={
-                "text": question
+    missing_vars = [
+        name
+        for name, value in {
+            "KNOWLEDGE_BASE_ID": KNOWLEDGE_BASE_ID,
+        }.items()
+        if not value
+    ]
+    if missing_vars:
+        raise ValueError(
+            f"{', '.join(missing_vars)} is not set. "
+            "Check your .env file."
+        )
+
+    client = get_bedrock_agent_runtime_client()
+
+    response = client.retrieve(
+        knowledgeBaseId=KNOWLEDGE_BASE_ID,
+        retrievalQuery={"text": query},
+        retrievalConfiguration={
+            "managedSearchConfiguration": {
+                "numberOfResults": 1,
             },
-            retrievalConfiguration={
-                "managedSearchConfiguration": {
-                    "numberOfResults": 3
-                }
+        },
+    )
+
+    results = response.get("retrievalResults", [])
+    snippets = []
+    sources = []
+    seen_sources = set()
+
+    for result in results:
+        score = result.get("score") or 0
+        if score <= 0.85:
+            continue
+
+        content = result.get("content", {})
+        text = content.get("text", "").strip()
+        if text:
+            snippets.append(text)
+
+        source_key = result.get("documentId") or repr(result.get("location"))
+        if source_key in seen_sources:
+            continue
+
+        seen_sources.add(source_key)
+        sources.append(
+            {
+                "document_id": result.get("documentId"),
+                "location": result.get("location"),
+                "metadata": result.get("metadata", {}),
+                "score": result.get("score"),
             }
         )
-        
-        # Extract retrieved documents
-        retrieved_results = retrieve_response.get("retrievalResults", [])
-        
-        if not retrieved_results:
-            return {
-                "answer": "I couldn't find relevant information in the knowledge base to answer your question.",
-                "sources": []
-            }
-        
-        # Build context from retrieved documents
-        context_parts = []
-        sources = []
-        
-        for result in retrieved_results:
-            content = result.get("content", {}).get("text", "")
-            location = result.get("location", {})
-            s3_location = location.get("s3Location", {})
-            uri = s3_location.get("uri", "")
-            
-            if content:
-                context_parts.append(content)
-            
-            if uri:
-                doc_name = uri.split("/")[-1] if "/" in uri else uri
-                if doc_name not in sources:
-                    sources.append(doc_name)
-        
-        # Combine context
-        context = "\n\n".join(context_parts)
-        
-        # Step 2: Generate answer using Bedrock with retrieved context
-        bedrock_runtime = boto3.client(
-            "bedrock-runtime",
-            region_name=os.getenv("AWS_REGION", "us-east-1")
-        )
-        
-        prompt = f"""You are a helpful travel assistant. Based on the following information from trusted travel documents, please answer the user's question.
 
-Context from documents:
-{context}
-
-User question: {question}
-
-Please provide a clear and accurate answer based on the information provided above. If the information doesn't fully answer the question, acknowledge what you can answer and what you cannot."""
-        
-        # Call Bedrock to generate answer
-        model_id = os.getenv("MODEL_ID", "amazon.nova-lite-v1:0")
-        
-        response = bedrock_runtime.converse(
-            modelId=model_id,
-            messages=[
-                {
-                    "role": "user",
-                    "content": [{"text": prompt}]
-                }
-            ]
-        )
-        
-        # Extract answer
-        answer = response.get("output", {}).get("message", {}).get("content", [{}])[0].get("text", "No answer generated.")
-        
-        return {
-            "answer": answer,
-            "sources": sources
-        }
-        
-    except Exception as e:
-        print(f"❌ Error querying Knowledge Base: {e}")
-        return {
-            "answer": f"Error: {str(e)}",
-            "sources": []
-        }
+    return {
+        "answer": "\n\n".join(snippets),
+        "source": sources,
+    }

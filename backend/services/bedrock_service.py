@@ -121,3 +121,48 @@ def get_ai_recommendation(
             status_code=502,
             detail=f"Bedrock API error: {str(e)}"
         )
+
+
+# ── Chat Response with History ─────────────────────────────────────────────────
+
+def get_chat_response(messages: list[dict]) -> str:
+    """
+    Call AWS Bedrock Converse API with conversation history.
+
+    Parameters
+    ----------
+    messages : list of dicts with keys 'role' and 'content'
+               e.g. [{"role": "user", "content": "Hello"}, ...]
+
+    Returns
+    -------
+    The assistant's response as plain text.
+    """
+    if not messages:
+        raise ValueError("messages list cannot be empty")
+
+    model_id = os.getenv("MODEL_ID", "amazon.nova-lite-v1:0")
+
+    # Convert our simple format to Bedrock's converse format
+    bedrock_messages = []
+    for msg in messages:
+        bedrock_messages.append({
+            "role": msg["role"],
+            "content": [{"text": msg["content"]}],
+        })
+
+    try:
+        client   = get_bedrock_client()
+        response = client.converse(
+            modelId=model_id,
+            messages=bedrock_messages,
+        )
+        result_text = response["output"]["message"]["content"][0]["text"]
+        return result_text
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Bedrock API error: {str(e)}"
+        )

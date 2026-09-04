@@ -15,3 +15,4 @@ class User(Base):
 
     # Use lazy loading to avoid circular import
     trips = relationship("Trip", back_populates="user", lazy="dynamic")
+    conversations = relationship("Conversation", back_populates="user", cascade="all, delete-orphan")

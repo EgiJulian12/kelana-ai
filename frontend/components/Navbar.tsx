@@ -92,10 +92,22 @@ export default function Navbar() {
           {isLoggedIn && (
             <>
               <Link 
+                href="/" 
+                className={`hover:text-purple-400 transition-colors ${pathname === '/' ? 'text-purple-400' : ''}`}
+              >
+                Plan a Trip
+              </Link>
+              <Link 
                 href="/trips" 
                 className={`hover:text-purple-400 transition-colors ${pathname === '/trips' ? 'text-purple-400' : ''}`}
               >
                 My Trips
+              </Link>
+              <Link 
+                href="/chat" 
+                className={`hover:text-purple-400 transition-colors ${pathname === '/chat' ? 'text-purple-400' : ''}`}
+              >
+                Chat
               </Link>
               <Link 
                 href="/assistant" 
@@ -105,9 +117,14 @@ export default function Navbar() {
               </Link>
             </>
           )}
-          <a href="/#destinasi" className="hover:text-purple-400 transition-colors">Destinasi</a>
-          <a href="/#fitur" className="hover:text-purple-400 transition-colors">Fitur Unggulan</a>
-          <a href="/#planner-form" className="hover:text-purple-400 transition-colors">Rencanakan Trip</a>
+          {!isLoggedIn && (
+            <Link 
+              href="/" 
+              className={`hover:text-purple-400 transition-colors ${pathname === '/' ? 'text-purple-400' : ''}`}
+            >
+              Plan a Trip
+            </Link>
+          )}
         </nav>
 
         {/* Right Section */}
@@ -162,11 +179,20 @@ export default function Navbar() {
                       </Link>
 
                       <Link
-                        href="/assistant"
+                        href="/chat"
                         onClick={() => setShowMenu(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all"
                       >
                         <MessageIcon />
+                        <span className="text-sm font-semibold">Chat</span>
+                      </Link>
+
+                      <Link
+                        href="/assistant"
+                        onClick={() => setShowMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        <SparklesIcon />
                         <span className="text-sm font-semibold">Travel Assistant</span>
                       </Link>
 

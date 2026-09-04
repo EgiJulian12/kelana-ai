@@ -3,3 +3,5 @@ backend/.venv
 _pychache_
 .gitignore
 .env
+CLAUDE.MD
+AGENTS.MD
