@@ -79,10 +79,13 @@ export default function ChatPage() {
     }
   }, [token, activeConvId]);
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom when messages change or loading state changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    // Scroll immediately when new message arrives
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages, loading]);
 
   async function loadConversations() {
     if (!token) return;
@@ -467,6 +470,42 @@ export default function ChatPage() {
             </div>
           ) : (
             <>
+              {/* Chat Header - Shows Active Conversation Title */}
+              <div className="flex-shrink-0 border-b border-white/10 bg-white/5 backdrop-blur-xl px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+                      {conversations.find((c) => c.id === activeConvId)?.title || "New Conversation"}
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {messages.length} {messages.length === 1 ? "message" : "messages"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveConvId(null);
+                      setMessages([]);
+                    }}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                    title="Close conversation"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
               {/* Messages - ONLY THIS SCROLLS */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {messages.length === 0 ? (
@@ -484,40 +523,53 @@ export default function ChatPage() {
                         msg.role === "user" ? "justify-end" : "justify-start"
                       }`}
                     >
-                      <div
-                        className={`max-w-3xl rounded-2xl p-5 shadow-xl ${
-                          msg.role === "user"
-                            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                            : "bg-white/5 backdrop-blur-xl border border-white/10 text-slate-100"
-                        }`}
-                      >
-                        {msg.role === "user" ? (
-                          <p className="whitespace-pre-wrap leading-relaxed">
-                            {msg.content}
-                          </p>
-                        ) : (
-                          formatMessageContent(msg.content)
-                        )}
+                      <div className="flex flex-col max-w-3xl">
+                        <div
+                          className={`rounded-2xl p-5 shadow-xl ${
+                            msg.role === "user"
+                              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                              : "bg-white/5 backdrop-blur-xl border border-white/10 text-slate-100"
+                          }`}
+                        >
+                          {msg.role === "user" ? (
+                            <p className="whitespace-pre-wrap leading-relaxed">
+                              {msg.content}
+                            </p>
+                          ) : (
+                            formatMessageContent(msg.content)
+                          )}
+                        </div>
+                        {/* Timestamp */}
+                        <p className={`text-xs text-slate-500 mt-1 px-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                          {new Date(msg.created_at).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </p>
                       </div>
                     </div>
                   ))
                 )}
                 {loading && (
                   <div className="flex justify-start">
-                    <div className="max-w-3xl rounded-2xl p-5 bg-white/5 backdrop-blur-xl border border-white/10">
-                      <div className="flex items-center space-x-2">
-                        <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0ms" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "150ms" }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "300ms" }}
-                        ></div>
+                    <div className="flex flex-col max-w-3xl">
+                      <div className="rounded-2xl p-5 bg-white/5 backdrop-blur-xl border border-white/10">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-slate-400 text-sm mr-2">AI is typing</span>
+                          <div
+                            className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0ms" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "150ms" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "300ms" }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
                   </div>
