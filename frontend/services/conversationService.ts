@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface Conversation {
   id: number;
@@ -44,7 +44,10 @@ export async function createConversation(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to create conversation" }));
     throw new Error(errorData.detail || "Failed to create conversation");
   }
 
@@ -64,7 +67,10 @@ export async function listConversations(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to list conversations" }));
     throw new Error(errorData.detail || "Failed to list conversations");
   }
 
@@ -91,7 +97,10 @@ export async function updateConversation(
   );
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to update conversation" }));
     throw new Error(errorData.detail || "Failed to update conversation");
   }
 
@@ -115,7 +124,10 @@ export async function deleteConversation(
   );
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to delete conversation" }));
     throw new Error(errorData.detail || "Failed to delete conversation");
   }
 }
@@ -140,7 +152,10 @@ export async function sendMessage(
   );
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to send message" }));
     throw new Error(errorData.detail || "Failed to send message");
   }
 
@@ -164,7 +179,10 @@ export async function listMessages(
   );
 
   if (!res.ok) {
-    const errorData = await res.json();
+    if (res.status === 401) {
+      throw new Error("Invalid or expired token (401 Unauthorized)");
+    }
+    const errorData = await res.json().catch(() => ({ detail: "Failed to list messages" }));
     throw new Error(errorData.detail || "Failed to list messages");
   }
 

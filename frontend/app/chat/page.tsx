@@ -24,45 +24,17 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Check authentication and validate token
+  // Check authentication - just verify token exists in localStorage
   useEffect(() => {
-    const validateAndSetToken = async () => {
-      const storedToken = localStorage.getItem("auth_token");
-      if (!storedToken) {
-        router.push("/login");
-        return;
-      }
+    const storedToken = localStorage.getItem("auth_token");
+    if (!storedToken) {
+      // No token at all, redirect to login
+      router.push("/login");
+      return;
+    }
 
-      // Validate token by trying a simple API call
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/conversations`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          }
-        );
-
-        if (res.status === 401) {
-          // Token is invalid
-          console.log("Token invalid, redirecting to login...");
-          localStorage.removeItem("auth_token");
-          router.push("/login");
-          return;
-        }
-
-        // Token is valid, set it
-        setToken(storedToken);
-      } catch (error) {
-        console.error("Token validation error:", error);
-        localStorage.removeItem("auth_token");
-        router.push("/login");
-      }
-    };
-
-    validateAndSetToken();
+    // Token exists, set it and let the API calls handle validation
+    setToken(storedToken);
   }, [router]);
 
   // Load conversations on mount (only after token is validated)
@@ -94,11 +66,15 @@ export default function ChatPage() {
       setConversations(data);
     } catch (error: any) {
       console.error("Failed to load conversations:", error);
-      // If token is invalid, redirect to login
-      if (error.message?.includes("Invalid or expired token")) {
+      // Only redirect to login if it's specifically an authentication error (401)
+      if (error.message?.includes("Invalid or expired token") || 
+          error.message?.includes("Unauthorized") ||
+          error.message?.includes("401")) {
+        console.log("Token expired or invalid, redirecting to login...");
         localStorage.removeItem("auth_token");
         router.push("/login");
       }
+      // For other errors (network, 500, etc.), just log them - don't redirect
     }
   }
 
@@ -109,11 +85,15 @@ export default function ChatPage() {
       setMessages(data);
     } catch (error: any) {
       console.error("Failed to load messages:", error);
-      // If token is invalid, redirect to login
-      if (error.message?.includes("Invalid or expired token")) {
+      // Only redirect to login if it's specifically an authentication error (401)
+      if (error.message?.includes("Invalid or expired token") || 
+          error.message?.includes("Unauthorized") ||
+          error.message?.includes("401")) {
+        console.log("Token expired or invalid, redirecting to login...");
         localStorage.removeItem("auth_token");
         router.push("/login");
       }
+      // For other errors (network, 500, etc.), just log them - don't redirect
     }
   }
 
@@ -124,9 +104,18 @@ export default function ChatPage() {
       await loadConversations();
       setActiveConvId(conversation_id);
       setMessages([]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create conversation:", error);
-      alert("Failed to create conversation");
+      // Only redirect to login if it's specifically an authentication error (401)
+      if (error.message?.includes("Invalid or expired token") || 
+          error.message?.includes("Unauthorized") ||
+          error.message?.includes("401")) {
+        console.log("Token expired or invalid, redirecting to login...");
+        localStorage.removeItem("auth_token");
+        router.push("/login");
+        return;
+      }
+      alert("Failed to create conversation. Please try again.");
     }
   }
 
@@ -160,12 +149,17 @@ export default function ChatPage() {
         await loadConversations();
       } catch (error: any) {
         console.error("Failed to create conversation:", error);
-        if (error.message?.includes("Invalid or expired token")) {
+        // Only redirect to login if it's specifically an authentication error (401)
+        if (error.message?.includes("Invalid or expired token") || 
+            error.message?.includes("Unauthorized") ||
+            error.message?.includes("401")) {
+          console.log("Token expired or invalid, redirecting to login...");
           localStorage.removeItem("auth_token");
           router.push("/login");
           return;
         }
-        alert("Failed to create conversation");
+        alert("Failed to create conversation. Please try again.");
+        setLoading(false);
         return;
       }
     }
@@ -182,12 +176,17 @@ export default function ChatPage() {
       await loadConversations(); // Refresh list to show updated title
     } catch (error: any) {
       console.error("Failed to send message:", error);
-      if (error.message?.includes("Invalid or expired token")) {
+      // Only redirect to login if it's specifically an authentication error (401)
+      if (error.message?.includes("Invalid or expired token") || 
+          error.message?.includes("Unauthorized") ||
+          error.message?.includes("401")) {
+        console.log("Token expired or invalid, redirecting to login...");
         localStorage.removeItem("auth_token");
         router.push("/login");
         return;
       }
-      alert("Failed to send message");
+      // For other errors, show alert
+      alert("Failed to send message. Please try again.");
     } finally {
       setLoading(false);
     }
