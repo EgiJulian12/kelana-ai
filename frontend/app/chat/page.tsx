@@ -193,7 +193,7 @@ export default function ChatPage() {
     }
   }
 
-  function formatMessageContent(content: string): JSX.Element {
+  function formatMessageContent(content: string) {
     // Clean all markdown symbols first
     let cleanedContent = content
       .replace(/\*\*/g, '')  // Remove bold markers
@@ -203,7 +203,7 @@ export default function ChatPage() {
       .replace(/~/g, '');    // Remove strikethrough markers
 
     const lines = cleanedContent.split("\n");
-    const elements: JSX.Element[] = [];
+    const elements: React.ReactNode[] = [];
     let currentList: string[] = [];
     let listKey = 0;
 
