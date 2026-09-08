@@ -106,6 +106,9 @@ export default function ChatPage() {
       setMessages([]);
     } catch (error: any) {
       console.error("Failed to create conversation:", error);
+      console.error("Error message:", error.message);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      
       // Only redirect to login if it's specifically an authentication error (401)
       if (error.message?.includes("Invalid or expired token") || 
           error.message?.includes("Unauthorized") ||
@@ -115,7 +118,7 @@ export default function ChatPage() {
         router.push("/login");
         return;
       }
-      alert("Failed to create conversation. Please try again.");
+      alert(`Failed to create conversation: ${error.message || 'Unknown error'}`);
     }
   }
 
