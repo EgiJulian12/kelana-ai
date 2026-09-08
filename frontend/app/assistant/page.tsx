@@ -119,7 +119,11 @@ export default function AssistantPage() {
               </div>
 
               {/* Answer Content using MarkdownItinerary */}
-              <MarkdownItinerary content={response.answer} />
+              {response.answer ? (
+                <MarkdownItinerary content={response.answer} />
+              ) : (
+                <p className="text-slate-400 italic">No answer found. Try rephrasing your question.</p>
+              )}
             </div>
 
             {/* Sources Card */}
@@ -144,7 +148,7 @@ export default function AssistantPage() {
                           <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                         </svg>
                         <span className="text-sm text-slate-300 group-hover:text-white transition-colors font-medium">
-                          {source}
+                          {typeof source === 'string' ? source : source.document_id || 'Document'}
                         </span>
                       </div>
                     </div>
