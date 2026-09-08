@@ -5,10 +5,17 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+export interface SourceDocument {
+  document_id?: string;
+  location?: any;
+  metadata?: any;
+  score?: number;
+}
+
 export interface AssistantResponse {
   question: string;
   answer: string;
-  sources: string[];
+  sources: (string | SourceDocument)[];  // Support both string and object
 }
 
 /**
