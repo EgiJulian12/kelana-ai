@@ -171,6 +171,12 @@ def ask(request: AskRequest):
         "source": result["source"],
     }
 
+# Alias endpoint for backward compatibility
+@app.post("/api/v1/assistant")
+def assistant(request: AskRequest):
+    """Alias for /api/v1/ask endpoint"""
+    return ask(request)
+
 
 # ── Protected conversation endpoints ─────────────────────────────────────────
 
