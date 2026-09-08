@@ -3,8 +3,6 @@
  * Calls Knowledge Base endpoint for grounded answers
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-
 export interface AssistantResponse {
   question: string;
   answer: string;
@@ -13,9 +11,10 @@ export interface AssistantResponse {
 
 /**
  * Ask the RAG-enabled travel assistant a question
+ * Hits Next.js API route which proxies to backend
  */
 export async function askAssistant(question: string): Promise<AssistantResponse> {
-  const response = await fetch(`${API_URL}/assistant`, {
+  const response = await fetch('/api/assistant', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
