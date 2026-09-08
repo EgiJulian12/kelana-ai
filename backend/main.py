@@ -78,11 +78,12 @@ class ConversationUpdateRequest(BaseModel):
 
 app = FastAPI()
 
-# CORS configuration - Allow multiple origins
+# CORS configuration - Allow multiple origins including Vercel preview deployments
 allowed_origins = [
     "http://localhost:3000",
     "http://localhost:3001",
     "https://egi-kelana-ai.vercel.app",
+    "https://kelana-ai-git-main-egijulian12s-projects.vercel.app",
 ]
 
 # Add custom FRONTEND_URL from env if provided
@@ -96,6 +97,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 init_db()
