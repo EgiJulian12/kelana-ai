@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { askAssistant, AssistantResponse } from '@/services/assistantService';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import MarkdownItinerary from '@/components/MarkdownItinerary';
 
 export default function AssistantPage() {
   const [question, setQuestion] = useState('');
@@ -102,7 +103,7 @@ export default function AssistantPage() {
         {/* Response Section */}
         {response && (
           <div className="space-y-4">
-            {/* AI Answer Card */}
+            {/* AI Answer Card with MarkdownItinerary */}
             <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm">
               {/* Header */}
               <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-700/50">
@@ -117,97 +118,8 @@ export default function AssistantPage() {
                 </div>
               </div>
 
-              {/* Answer Content */}
-              <div className="prose prose-invert prose-slate max-w-none">
-                <div className="text-slate-200 leading-relaxed space-y-4">
-                  {response.answer.split('\n\n').map((section, sectionIdx) => {
-                    const lines = section.split('\n');
-                    
-                    return (
-                      <div key={sectionIdx} className="space-y-2">
-                        {lines.map((line, lineIdx) => {
-                          if (!line.trim()) return null;
-                          
-                          // Numbered list with bold title (1. **Title:** description)
-                          const numberedBoldMatch = line.match(/^(\d+)\.\s*\*\*(.*?)\*\*:?\s*(.*)$/);
-                          if (numberedBoldMatch) {
-                            return (
-                              <div key={lineIdx} className="flex gap-3 py-2">
-                                <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm font-bold border border-teal-500/30">
-                                  {numberedBoldMatch[1]}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="font-semibold text-white mb-1">{numberedBoldMatch[2]}</div>
-                                  {numberedBoldMatch[3] && (
-                                    <div className="text-slate-300 text-sm">{numberedBoldMatch[3]}</div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          }
-                          
-                          // Bullet with bold (- **Title:** description)
-                          const bulletBoldMatch = line.match(/^[-•]\s*\*\*(.*?)\*\*:?\s*(.*)$/);
-                          if (bulletBoldMatch) {
-                            return (
-                              <div key={lineIdx} className="flex gap-3 py-1 pl-4">
-                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-teal-400 mt-2"></div>
-                                <div className="flex-1">
-                                  <span className="font-medium text-white">{bulletBoldMatch[1]}</span>
-                                  {bulletBoldMatch[2] && (
-                                    <span className="text-slate-300">: {bulletBoldMatch[2]}</span>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          }
-                          
-                          // Simple bullet point
-                          const bulletMatch = line.match(/^[-•✓]\s*(.*)$/);
-                          if (bulletMatch) {
-                            return (
-                              <div key={lineIdx} className="flex gap-3 py-1 pl-4">
-                                <span className="text-teal-400 text-lg leading-none">•</span>
-                                <span className="text-slate-300 flex-1">{bulletMatch[1]}</span>
-                              </div>
-                            );
-                          }
-                          
-                          // Heading (### or **)
-                          const headingMatch = line.match(/^#{1,3}\s+(.*)$|^\*\*(.*?)\*\*$/);
-                          if (headingMatch) {
-                            const title = headingMatch[1] || headingMatch[2];
-                            return (
-                              <h4 key={lineIdx} className="font-bold text-white text-base mt-4 mb-2 flex items-center gap-2">
-                                <div className="w-1 h-5 bg-gradient-to-b from-teal-400 to-emerald-400 rounded-full"></div>
-                                {title}
-                              </h4>
-                            );
-                          }
-                          
-                          // Regular paragraph with inline formatting
-                          return (
-                            <p key={lineIdx} className="text-slate-300 leading-relaxed">
-                              {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, i) => {
-                                const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
-                                const italicMatch = part.match(/^\*(.*?)\*$/);
-                                
-                                if (boldMatch) {
-                                  return <strong key={i} className="font-semibold text-white">{boldMatch[1]}</strong>;
-                                }
-                                if (italicMatch) {
-                                  return <em key={i} className="italic text-slate-400">{italicMatch[1]}</em>;
-                                }
-                                return <span key={i}>{part}</span>;
-                              })}
-                            </p>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* Answer Content using MarkdownItinerary */}
+              <MarkdownItinerary content={response.answer} />
             </div>
 
             {/* Sources Card */}
