@@ -61,7 +61,7 @@ def retrieve_and_generate(query: str) -> dict:
         retrievalQuery={"text": query},
         retrievalConfiguration={
             "managedSearchConfiguration": {
-                "numberOfResults": 1,
+                "numberOfResults": 5,  # Retrieve top 5 results
             },
         },
     )
@@ -73,7 +73,8 @@ def retrieve_and_generate(query: str) -> dict:
 
     for result in results:
         score = result.get("score") or 0
-        if score <= 0.85:
+        # Lower threshold to 0.5 to get more results
+        if score < 0.5:
             continue
 
         content = result.get("content", {})
