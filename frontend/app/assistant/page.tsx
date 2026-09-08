@@ -138,21 +138,27 @@ export default function AssistantPage() {
                   </h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {response.sources.map((source, idx) => (
-                    <div
-                      key={idx}
-                      className="group px-3 py-2 bg-slate-900/50 hover:bg-slate-900/80 rounded-lg border border-slate-700/50 hover:border-teal-500/50 transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm text-slate-300 group-hover:text-white transition-colors font-medium">
-                          {typeof source === 'string' ? source : source.document_id || 'Document'}
-                        </span>
+                  {response.sources.map((source, idx) => {
+                    const displayText = typeof source === 'string' 
+                      ? source 
+                      : (source as any)?.document_id || 'Document';
+                    
+                    return (
+                      <div
+                        key={idx}
+                        className="group px-3 py-2 bg-slate-900/50 hover:bg-slate-900/80 rounded-lg border border-slate-700/50 hover:border-teal-500/50 transition-all"
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-sm text-slate-300 group-hover:text-white transition-colors font-medium">
+                            {displayText}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

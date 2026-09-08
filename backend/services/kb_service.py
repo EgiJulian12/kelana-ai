@@ -80,7 +80,19 @@ def retrieve_and_generate(query: str) -> dict:
         content = result.get("content", {})
         text = content.get("text", "").strip()
         if text:
-            snippets.append(text)
+            # Clean up encoding issues and special characters
+            # Remove emoji replacement characters and other weird encoding artifacts
+            import re
+            # Remove common encoding artifacts like ð??, Ã©, etc.
+            text = re.sub(r'ð\?\?[^\s]*', '', text)  # Remove ð?? patterns
+            text = re.sub(r'[Ãð][^\s\w,\.!?:;-]*', '', text)  # Remove Ã and ð with trailing chars
+            # Remove standalone question marks and asterisks at start of sections
+            text = re.sub(r'^\s*[\?\*]+\s*\d*\.?\s*', '', text, flags=re.MULTILINE)
+            # Clean up multiple spaces
+            text = re.sub(r'\s+', ' ', text).strip()
+            
+            if text:  # Only add if still has content after cleaning
+                snippets.append(text)
 
         source_key = result.get("documentId") or repr(result.get("location"))
         if source_key in seen_sources:
