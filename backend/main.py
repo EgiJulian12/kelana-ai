@@ -170,7 +170,7 @@ def ask(request: AskRequest):
     return {
         "question": request.question,
         "answer": result["answer"],
-        "source": result["source"],
+        "sources": result["source"],  # Changed from "source" to "sources" for frontend compatibility
     }
 
 # Alias endpoint for backward compatibility
