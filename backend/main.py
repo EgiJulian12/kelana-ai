@@ -10,7 +10,7 @@ from services.trip_services import (
     get_transportation_recomendation
 )
 from services.bedrock_service import get_ai_recommendation, get_chat_response
-from services.kb_service import ask_knowledge_base
+from services.kb_service import retrieve_and_generate
 from services.auth_service import register_user, login_user, get_current_user
 from models.trip import Trip
 from models.user import User
@@ -162,7 +162,7 @@ def me(current_user: User = Depends(get_current_user)):
 @app.post("/api/v1/ask")
 def ask(request: AskRequest):
     try:
-        result = ask_knowledge_base(request.question)
+        result = retrieve_and_generate(request.question)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {
