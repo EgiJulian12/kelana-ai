@@ -78,9 +78,21 @@ class ConversationUpdateRequest(BaseModel):
 
 app = FastAPI()
 
+# CORS configuration - Allow multiple origins
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://egi-kelana-ai.vercel.app",
+]
+
+# Add custom FRONTEND_URL from env if provided
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url and frontend_url not in allowed_origins:
+    allowed_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:3000")],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
